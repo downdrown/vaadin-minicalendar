@@ -21,6 +21,7 @@
     "@vaadin/component-base": "23.3.4",
     "@vaadin/confirm-dialog": "23.3.4",
     "@vaadin/context-menu": "23.3.4",
+    "@vaadin/cookie-consent": "23.3.4",
     "@vaadin/custom-field": "23.3.4",
     "@vaadin/date-picker": "23.3.4",
     "@vaadin/date-time-picker": "23.3.4",
@@ -69,6 +70,7 @@
     "@vaadin/vaadin-combo-box": "23.3.4",
     "@vaadin/vaadin-confirm-dialog": "23.3.4",
     "@vaadin/vaadin-context-menu": "23.3.4",
+    "@vaadin/vaadin-cookie-consent": "23.3.4",
     "@vaadin/vaadin-custom-field": "23.3.4",
     "@vaadin/vaadin-date-picker": "23.3.4",
     "@vaadin/vaadin-date-time-picker": "23.3.4",
@@ -145,6 +147,7 @@
       "@vaadin/component-base": "23.3.4",
       "@vaadin/confirm-dialog": "23.3.4",
       "@vaadin/context-menu": "23.3.4",
+      "@vaadin/cookie-consent": "23.3.4",
       "@vaadin/custom-field": "23.3.4",
       "@vaadin/date-picker": "23.3.4",
       "@vaadin/date-time-picker": "23.3.4",
@@ -193,6 +196,7 @@
       "@vaadin/vaadin-combo-box": "23.3.4",
       "@vaadin/vaadin-confirm-dialog": "23.3.4",
       "@vaadin/vaadin-context-menu": "23.3.4",
+      "@vaadin/vaadin-cookie-consent": "23.3.4",
       "@vaadin/vaadin-custom-field": "23.3.4",
       "@vaadin/vaadin-date-picker": "23.3.4",
       "@vaadin/vaadin-date-time-picker": "23.3.4",
@@ -248,7 +252,7 @@
       "workbox-core": "6.5.4",
       "workbox-precaching": "6.5.4"
     },
-    "hash": "c3ed2e06e8bb1bf6f242010b1e782bf03ca92b5f2ed10879f672220d5dd8d910"
+    "hash": "3972c13ba3f6192ea896bf9ab7a0106be3f70f2c1dcb38fd170df488df536ed9"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -355,6 +359,8 @@
     "@vaadin/multi-select-combo-box": "$@vaadin/multi-select-combo-box",
     "@vaadin/vaadin-confirm-dialog": "$@vaadin/vaadin-confirm-dialog",
     "@vaadin/tabsheet": "$@vaadin/tabsheet",
-    "@vaadin/tooltip": "$@vaadin/tooltip"
+    "@vaadin/tooltip": "$@vaadin/tooltip",
+    "@vaadin/cookie-consent": "$@vaadin/cookie-consent",
+    "@vaadin/vaadin-cookie-consent": "$@vaadin/vaadin-cookie-consent"
   }
 }

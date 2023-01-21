@@ -1,0 +1,75 @@
+/*
+  Author: Manfred Huber
+  Description: Custom styles for the MiniCalendar component.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200&display=swap');
+
+.minicalendar {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.minicalendar .title {
+    font-size: var(--lumo-font-size-m);
+    color: var(--lumo-header-text-color);
+    text-align: center;
+}
+
+.minicalendar:not([disabled]) .title:not(.readonly) {
+    cursor: pointer;
+}
+
+.minicalendar[disabled] .title {
+    color: var(--lumo-disabled-text-color);
+}
+
+.minicalendar .weekday {
+    font-family: 'Roboto Mono', monospace;
+    font-size: var(--lumo-font-size-s);
+    color: var(--lumo-secondary-text-color);
+    text-align: center;
+    vertical-align: middle;
+    line-height: 30px;
+}
+
+.minicalendar .day {
+    background-color: var(--lumo-contrast-5pct);
+    border-radius: 15%;
+    text-align: center;
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+    vertical-align: middle;
+    line-height: 30px;
+}
+
+.minicalendar[disabled] .day {
+    color: var(--lumo-disabled-text-color);
+}
+
+.minicalendar:not([disabled]) .day:not(.readonly) {
+    cursor: pointer;
+}
+
+.minicalendar .day.rounded {
+    border-radius: 50%;
+}
+
+.minicalendar .day.highlight-weekend {
+    background-color: var(--lumo-contrast-20pct);
+}
+
+.minicalendar .day.selected {
+    background-color: var(--lumo-primary-color);
+    color: var(--lumo-primary-contrast-color);
+}
+
+.minicalendar[disabled] .day.selected {
+    background-color: var(--lumo-primary-color-10pct);
+    color: var(--lumo-primary-contrast-color);
+}
+
+.minicalendar:not([disabled]) .day.hover:not(.readonly):hover {
+    box-shadow: var(--lumo-box-shadow-xs);
+}
