@@ -3,13 +3,14 @@ package org.vaadin.addons.minicalendar;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -37,18 +38,23 @@ import java.util.Set;
 @PageTitle("MiniCalendar Showcase")
 public class ShowcaseView extends Div implements BeforeEnterListener {
 
-    private final Set<MiniCalendar> miniCalendars = new HashSet<>();
+    /* State Vars */
+    private boolean syncValueChanges = false;
 
+    private final Set<MiniCalendar> miniCalendars = new HashSet<>();
     private final HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> onDateSelection = event -> {
         if (event.isFromClient()) {
             Notification.show("🗓️ Value changed to " + event.getValue().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).localizedBy(UI.getCurrent().getLocale())));
-            miniCalendars.forEach(cal -> cal.setValue(event.getValue()));
+            if (syncValueChanges) {
+                miniCalendars.forEach(cal -> cal.setValue(event.getValue()));
+            }
         }
     };
 
     public ShowcaseView() {
         setSizeFull();
         renderView();
+        miniCalendars.forEach(miniCalendar -> miniCalendar.setValue(LocalDate.now()));
     }
 
     private void renderView() {
@@ -180,22 +186,34 @@ public class ShowcaseView extends Div implements BeforeEnterListener {
         add(scroller);
     }
 
-    private static Component controlBar() {
+    private Component controlBar() {
+
+        var themeToggleButton = new Button("Toggle Theme", e -> toggleTheme());
+        themeToggleButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
+
+        var clearValuesButton = new Button("Clear Values", e -> miniCalendars.forEach(miniCalendar -> miniCalendar.setValue(null)));
+        clearValuesButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
 
         var localeDataProvider = new ListDataProvider<>(List.of(Locale.getAvailableLocales()));
         localeDataProvider.setSortOrder(Locale::getDisplayName, SortDirection.ASCENDING);
 
         var localeSelect = new Select<Locale>();
+        localeSelect.setMinWidth(300, Unit.PIXELS);
         localeSelect.addThemeVariants(SelectVariant.LUMO_SMALL);
         localeSelect.setItems(localeDataProvider);
         localeSelect.setItemLabelGenerator(Locale::getDisplayName);
         localeSelect.setValue(UI.getCurrent().getLocale());
         localeSelect.addValueChangeListener(e -> UI.getCurrent().setLocale(e.getValue()));
 
-        var themeToggleButton = new Button("Toggle Theme", e -> toggleTheme());
-        themeToggleButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
+        var syncValueChangeCheckbox = new Checkbox("Sync value changes", syncValueChanges, e -> syncValueChanges = e.getValue());
 
-        var layout = new HorizontalLayout(themeToggleButton, localeSelect);
+        var layout = new HorizontalLayout(
+            themeToggleButton,
+            clearValuesButton,
+            localeSelect,
+            syncValueChangeCheckbox
+        );
+        layout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         layout.setMargin(false);
         layout.setPadding(false);
         layout.setSpacing(true);
