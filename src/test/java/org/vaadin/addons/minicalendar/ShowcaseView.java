@@ -27,8 +27,10 @@ import com.vaadin.flow.theme.lumo.Lumo;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.format.TextStyle;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +42,7 @@ public class ShowcaseView extends Div implements BeforeEnterListener {
 
     /* State Vars */
     private boolean syncValueChanges = false;
+    private boolean syncYearMonthChanges = false;
 
     private final Set<MiniCalendar> miniCalendars = new HashSet<>();
     private final HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> onDateSelection = event -> {
@@ -47,6 +50,15 @@ public class ShowcaseView extends Div implements BeforeEnterListener {
             Notification.show("🗓️ Value changed to " + event.getValue().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).localizedBy(UI.getCurrent().getLocale())));
             if (syncValueChanges) {
                 miniCalendars.forEach(cal -> cal.setValue(event.getValue()));
+            }
+        }
+    };
+
+    private final HasValue.ValueChangeListener<HasValue.ValueChangeEvent<YearMonth>> onYearMonthSelection = event -> {
+        if (event.isFromClient()) {
+            Notification.show("🗓️ Month & Year changed to " + event.getValue().getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " + event.getValue().getYear());
+            if (syncYearMonthChanges) {
+                miniCalendars.forEach(cal -> cal.setYearMonth(event.getValue()));
             }
         }
     };
@@ -206,12 +218,14 @@ public class ShowcaseView extends Div implements BeforeEnterListener {
         localeSelect.addValueChangeListener(e -> UI.getCurrent().setLocale(e.getValue()));
 
         var syncValueChangeCheckbox = new Checkbox("Sync value changes", syncValueChanges, e -> syncValueChanges = e.getValue());
+        var syncYearMonthChangeCheckbox = new Checkbox("Sync month & year changes", syncYearMonthChanges, e -> syncYearMonthChanges = e.getValue());
 
         var layout = new HorizontalLayout(
             themeToggleButton,
             clearValuesButton,
             localeSelect,
-            syncValueChangeCheckbox
+            syncValueChangeCheckbox,
+            syncYearMonthChangeCheckbox
         );
         layout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         layout.setMargin(false);
@@ -255,6 +269,7 @@ public class ShowcaseView extends Div implements BeforeEnterListener {
     private Component miniCalendar(String description, MiniCalendar miniCalendar) {
 
         miniCalendar.addValueChangeListener(onDateSelection);
+        miniCalendar.addYearMonthChangeListener(onYearMonthSelection);
         miniCalendars.add(miniCalendar);
 
         var label = new Label(description);
