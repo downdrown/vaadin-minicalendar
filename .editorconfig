@@ -1,0 +1,25 @@
+root = true
+
+# General settings
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# IntelliJ
+ij_formatter_tags_enabled = true
+ij_java_do_not_wrap_after_single_annotation = true
+ij_java_class_count_to_use_import_on_demand = 999
+ij_java_names_count_to_use_import_on_demand = 999
+ij_properties_spaces_around_key_value_delimiter = false
+
+# Indentation for sources
+[{*.java, *.json}]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+# Indentation for YAMLs)
+[{*.yml, *.yaml}]
+indent_style = tab
