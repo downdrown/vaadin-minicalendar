@@ -2,6 +2,7 @@ package org.vaadin.addons.minicalendar;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -18,6 +19,7 @@ import com.vaadin.flow.component.select.SelectVariant;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
+import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 
 import java.time.DayOfWeek;
@@ -26,7 +28,14 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A small calendar component that can be used to let users select {@link LocalDate} values.
@@ -42,20 +51,15 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private static final String CSS_DAY = "day";
     private static final String CSS_SELECTED = "selected";
     private static final String CSS_READONLY = "readonly";
-
     private final VerticalLayout content = new VerticalLayout();
     private final HashMap<LocalDate, Component> dayToComponentMapping = new HashMap<>(31);
     private final List<MiniCalendarVariant> appliedVariants = new ArrayList<>(MiniCalendarVariant.values().length);
+    private final YearMonthHolder yearMonthHolder = new YearMonthHolder();
     private DayOfWeek firstDayOfWeek = getFirstDayOfWeekByLocale(getLocale());
-
-
-    /* State Management */
-
     private Span selectedComponent = null;
     private Button previousMonthButton = null;
     private Button nextMonthButton = null;
     private Span title = null;
-    private YearMonth yearMonth;
 
 
     /* Constructors */
@@ -70,7 +74,8 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     public MiniCalendar(YearMonth yearMonth) {
 
-        this.yearMonth = yearMonth;
+        this.yearMonthHolder.setValue(yearMonth);
+        yearMonthHolder.addValueChangeListener(e -> redraw());
 
         content.addClassName(CSS_BASE);
         content.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
@@ -90,7 +95,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         final var redrawRequired = !Objects.equals(getValue(), newValue);
         super.setValue(newValue);
         if (newValue != null) {
-            yearMonth = YearMonth.from(newValue);
+            yearMonthHolder.setValue(YearMonth.from(newValue));
         }
         if (redrawRequired) {
             redraw();
@@ -150,8 +155,10 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     }
 
     public void setYearMonth(YearMonth yearMonth) {
-        this.yearMonth = yearMonth;
-        redraw();
+        yearMonthHolder.setValue(yearMonth);
+    }
+    public Registration addYearMonthChangeListener(ValueChangeListener<ValueChangeEvent<YearMonth>> listener) {
+        return yearMonthHolder.addValueChangeListener(listener);
     }
 
     /* Internal API */
@@ -185,9 +192,10 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         nextMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         nextMonthButton.setVisible(!isReadOnly());
 
-        title = new Span(yearMonth.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " + yearMonth.getYear());
+        title = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " + yearMonthHolder.getValue().getYear());
         title.addClassName("title");
         title.addClickListener(e -> showYearSelection());
+
         if (isReadOnly()) {
             title.addClassName(CSS_READONLY);
         }
@@ -222,7 +230,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private void renderDayRows() {
 
         var dayComponents = new ArrayList<Component>(7);
-        var dayOfWeekOfFirstDayInMonth = yearMonth.atDay(1).getDayOfWeek();
+        var dayOfWeekOfFirstDayInMonth = yearMonthHolder.getValue().atDay(1).getDayOfWeek();
         var dayIterator = firstDayOfWeek;
 
         // Fill empty days before first day of month
@@ -232,14 +240,14 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         }
 
         // Add actual days to the calendar view
-        for (int dayOfMonth = 1; dayOfMonth <= getLastDayOfMonth(yearMonth); dayOfMonth++) {
+        for (int dayOfMonth = 1; dayOfMonth <= getLastDayOfMonth(yearMonthHolder.getValue()); dayOfMonth++) {
 
             if (dayComponents.size() == 7) {
                 addRow(dayComponents);
                 dayComponents.clear();
             }
 
-            var day = yearMonth.atDay(dayOfMonth);
+            var day = yearMonthHolder.getValue().atDay(dayOfMonth);
             var dayComponent = createDayComponent(day);
             dayToComponentMapping.put(day, dayComponent);
             dayComponents.add(dayComponent);
@@ -262,23 +270,23 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         var yearSelect = new Select<Year>();
         yearSelect.addThemeVariants(SelectVariant.LUMO_SMALL);
         yearSelect.setItems(evaluateEligibleYears());
-        yearSelect.setValue(Year.of(yearMonth.getYear()));
+        yearSelect.setValue(Year.of(yearMonthHolder.getValue().getYear()));
 
         var selectionDialog = new Dialog(yearSelect);
         selectionDialog.open();
 
         yearSelect.addValueChangeListener(event -> {
-            setYearMonth(event.getValue().atMonth(yearMonth.getMonth()));
+            yearMonthHolder.setValueFromClient(event.getValue().atMonth(yearMonthHolder.getValue().getMonth()));
             selectionDialog.close();
         });
     }
 
     private void navigateToPreviousMonth() {
-        setYearMonth(yearMonth.minusMonths(1));
+        yearMonthHolder.setValueFromClient(yearMonthHolder.getValue().minusMonths(1));
     }
 
     private void navigateToNextMonth() {
-        setYearMonth(yearMonth.plusMonths(1));
+        yearMonthHolder.setValueFromClient(yearMonthHolder.getValue().plusMonths(1));
     }
 
 
@@ -286,8 +294,8 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private List<Year> evaluateEligibleYears() {
 
-        var minYear = yearMonth.getYear() - 100;
-        var maxYear = yearMonth.getYear() + 100;
+        var minYear = yearMonthHolder.getValue().getYear() - 100;
+        var maxYear = yearMonthHolder.getValue().getYear() + 100;
         var eligibleYears = new ArrayList<Year>(201);
 
         for (int year = minYear; year < maxYear; year++) {
@@ -394,5 +402,88 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private static boolean isWeekend(LocalDate localDate) {
         return localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY;
+    }
+
+
+    private static final class YearMonthHolder implements HasValue<ValueChangeEvent<YearMonth>, YearMonth> {
+
+        private final HasValue<?, YearMonth> instance = this;
+        private final List<ValueChangeListener<? super ValueChangeEvent<YearMonth>>> valueChangeListeners = new ArrayList<>();
+        private YearMonth value;
+
+        void setValueFromClient(YearMonth value) {
+            final var oldValue = this.value;
+            this.value = value;
+            fireYearMonthValueChangeEvent(oldValue, value, true);
+        }
+
+        @Override
+        public void setValue(YearMonth value) {
+            final var oldValue = this.value;
+            this.value = value;
+            fireYearMonthValueChangeEvent(oldValue, value, false);
+        }
+
+        @Override
+        public YearMonth getValue() {
+            return value;
+        }
+
+        @Override
+        public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<YearMonth>> valueChangeListener) {
+            valueChangeListeners.add(valueChangeListener);
+            return () -> valueChangeListeners.remove(valueChangeListener);
+        }
+
+        private void fireYearMonthValueChangeEvent(YearMonth oldValue, YearMonth newValue, boolean fromClient) {
+
+            if (Objects.equals(oldValue, newValue)) {
+                return;
+            }
+
+            final var event = new ValueChangeEvent<YearMonth>() {
+                @Override
+                public HasValue<?, YearMonth> getHasValue() {
+                    return instance;
+                }
+
+                @Override
+                public boolean isFromClient() {
+                    return fromClient;
+                }
+
+                @Override
+                public YearMonth getOldValue() {
+                    return oldValue;
+                }
+
+                @Override
+                public YearMonth getValue() {
+                    return newValue;
+                }
+            };
+
+            valueChangeListeners.forEach(listener -> listener.valueChanged(event));
+        }
+
+        @Override
+        public void setReadOnly(boolean b) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public boolean isReadOnly() {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public void setRequiredIndicatorVisible(boolean b) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public boolean isRequiredIndicatorVisible() {
+            throw new UnsupportedOperationException("not implemented");
+        }
     }
 }
