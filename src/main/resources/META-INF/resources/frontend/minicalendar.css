@@ -65,9 +65,10 @@
     color: var(--lumo-primary-contrast-color);
 }
 
-.minicalendar[disabled] .day.selected {
+.minicalendar[disabled] .day.selected,
+.minicalendar .day.selected.read-only {
     background-color: var(--lumo-primary-color-10pct);
-    color: var(--lumo-primary-contrast-color);
+    color: var(--lumo-tertiary-text-color);
 }
 
 .minicalendar:not([disabled]) .day.hover:not(.readonly):hover {
