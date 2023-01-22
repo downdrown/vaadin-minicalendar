@@ -54,6 +54,8 @@ You can dynamically en- or disable certain days in the calendar view by setting 
 evaluate the enabled state of a day when rendering the component.
 
 > **Warning**
+> `DayEnabledProvider` could cause performance issues!
+>
 > The `DayEnabledProvider` may be called quite a few times during the lifetime of a `MiniCalendar`, you should ensure
 > that the backing function **is not an expensive backend operation**, else you could experience some performance issues.
 
