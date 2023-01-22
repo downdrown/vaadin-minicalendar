@@ -355,6 +355,10 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             component.addClassName(MiniCalendarVariant.HOVER_DAYS.getVariantName());
         }
 
+        if (hasVariant(MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY) && forDay.equals(LocalDate.now())) {
+            component.addClassName(MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY.getVariantName());
+        }
+
         if (isReadOnly()) {
             component.addClassName(CSS_READONLY);
         }

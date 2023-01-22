@@ -11,6 +11,8 @@ public enum MiniCalendarVariant implements ThemeVariant {
 
     /** Highlight the background of weekend days. */
     HIGHLIGHT_WEEKEND("highlight-weekend"),
+    /** Highlight the current day in the calendar view. */
+    HIGHLIGHT_CURRENT_DAY("highlight-current-day"),
     /** Show the background of week days rounded. */
     ROUNDED("rounded"),
     /** Raise the week days when hovering. */
