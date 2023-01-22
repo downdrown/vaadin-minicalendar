@@ -9,6 +9,19 @@ selecting `LocalDate` values.
 |:-------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------:|
 | <img src="docs/screens/default_standard.png" alt="Default Standard" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_standard.png" alt="Default Standard" width="300" style="border-radius: 10px"/> |
 
+## Motivation
+I am building a small [Diary](https://github.com/downdrown/diary) application and needed a way to easily let users select
+days in a month with a single click (just to make it as comfortable as possible). I first tried to use the built-in
+`DatePicker` component, but unfortunately there's no way to have this component "always open".
+
+Hence, I decided to build one on my own.
+
+The next thought was *"oh, this could be useful for somebody else as well"* and I quickly checked how "hard" it is to
+contribute components to the Vaadin Directory. Luckily this is not problematic at all and I love that it's this easy ❤️
+
+I hope you enjoy the component, if there's anything you want to chit-chat about feel free to say
+[hello@downdrown.at](mailto:hello@downdrown.at).
+
 ## Fundamentals
 The internals are built on the [Java Time API](https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html)
 , the displayed values are localized with the locale that is set for the current UI.
