@@ -172,5 +172,56 @@ Check out these examples of the component in different states.
 
 </details>
 
+<details>
+    <summary>Disabled</summary>
+
+#### No Theme Variant
+
+|                                       Light Mode                                        |                                          Dark Mode                                           |
+|:---------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/disabled_standard.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_standard.png" width="300" style="border-radius: 10px"/> |
+
+#### Highlight weekends
+
+|                                            Light Mode                                             |                                               Dark Mode                                                |
+|:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/disabled_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
+
+#### Shifted beginning of the week
+
+|                                                Light Mode                                                |                                                   Dark Mode                                                   |
+|:--------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/disabled_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
+
+
+#### Shifted beginning of the week
+
+|                                                Light Mode                                                |                                                   Dark Mode                                                   |
+|:--------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/disabled_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
+
+
+#### Hover days
+
+|                                        Light Mode                                         |                                           Dark Mode                                            |
+|:-----------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/disabled_hover_days.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_hover_days.png" width="300" style="border-radius: 10px"/> |
+
+
+#### Rounded
+
+|                                       Light Mode                                       |                                          Dark Mode                                          |
+|:--------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/disabled_rounded.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_rounded.png" width="300" style="border-radius: 10px"/> |
+
+
+#### Rounded, Highlight weekends
+
+|                                                Light Mode                                                 |                                                   Dark Mode                                                    |
+|:---------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/disabled_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
+
+</details>
+
 
 
