@@ -124,45 +124,51 @@ Check out these examples of the component in different states.
 <details>
     <summary>Read Only</summary>
 
+#### No Theme Variant
+
+|                                       Light Mode                                        |                                          Dark Mode                                           |
+|:---------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/readonly_standard.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_standard.png" width="300" style="border-radius: 10px"/> |
+
 #### Highlight weekends
 
-|                                                Light Mode                                                 |                                                   Dark Mode                                                    |
-|:---------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/readonly_default_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/readonly_dark_default_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
+|                                            Light Mode                                             |                                               Dark Mode                                                |
+|:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/readonly_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
 
 #### Shifted beginning of the week
 
-|                                                    Light Mode                                                    |                                                       Dark Mode                                                       |
-|:----------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/readonly_default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/readonly_dark_default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
+|                                                Light Mode                                                |                                                   Dark Mode                                                   |
+|:--------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/readonly_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
 
 
 #### Shifted beginning of the week
 
-|                                                    Light Mode                                                    |                                                       Dark Mode                                                       |
-|:----------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/readonly_default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/readonly_dark_default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
+|                                                Light Mode                                                |                                                   Dark Mode                                                   |
+|:--------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/readonly_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
 
 
 #### Hover days
 
-|                                            Light Mode                                             |                                               Dark Mode                                                |
-|:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/readonly_default_hover_days.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/readonly_dark_default_hover_days.png" width="300" style="border-radius: 10px"/> |
+|                                        Light Mode                                         |                                           Dark Mode                                            |
+|:-----------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/readonly_hover_days.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_hover_days.png" width="300" style="border-radius: 10px"/> |
 
 
 #### Rounded
 
-|                                           Light Mode                                           |                                              Dark Mode                                              |
-|:----------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/readonly_default_rounded.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/readonly_dark_default_rounded.png" width="300" style="border-radius: 10px"/> |
+|                                       Light Mode                                       |                                          Dark Mode                                          |
+|:--------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/readonly_rounded.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_rounded.png" width="300" style="border-radius: 10px"/> |
 
 
 #### Rounded, Highlight weekends
 
-|                                                    Light Mode                                                     |                                                       Dark Mode                                                        |
-|:-----------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/readonly_default_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/readonly_dark_default_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
+|                                                Light Mode                                                 |                                                   Dark Mode                                                    |
+|:---------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/readonly_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
 
 </details>
 
