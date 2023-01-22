@@ -30,7 +30,7 @@ The component implements the `LocaleChangeObserver`. It listens for locale chang
 locale has changed.
 
 It is highly customizable, offers a lot of configuration- and interaction possibilities. You can either use the built-in
-`MiniCalendarVariant` or provide custom CSS classes using the /* TODO StyleProvider */.
+`MiniCalendarVariant` or provide custom CSS classes using the `setDayStyleProvider()`.
 
 ## Features
 
@@ -64,7 +64,7 @@ registration.remove();
 
 ### Dynamically En- or Disable certain days
 You can dynamically en- or disable certain days in the calendar view by setting up a `DayEnabledProvider` with
-`setDayEnabledProvider()`. The method takes a `SerializablePredicate<LoacalDate>` as argument which will be used to
+`setDayEnabledProvider()`. The method takes a `SerializablePredicate<LocallDate>` as argument which will be used to
 evaluate the enabled state of a day when rendering the component.
 
 > **Warning**
@@ -82,8 +82,6 @@ miniCalendar.setDayEnabledProvider(value -> !disabledDays.contains(value));
 ```
 
 <img src="docs/screens/disabled_days.gif" />
-
-
 
 > **Warning**
 > Disabled days can still be selected by the server!
@@ -105,8 +103,6 @@ miniCalendar.setDayEnabledProvider(value -> !disabledDays.contains(value));
 ```
 <img src="docs/screens/disabled_days_server_value.gif" />
 </details>
-
-
 
 ## Appearance
 
@@ -166,7 +162,6 @@ You can combine multiple Theme Variants to change the component's appearance.
 | <img src="docs/screens/default_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
 
 </details>
-
 
 ### Component State
 The component's state implicitly affects the appearance of the component. For instance a *disabled* component will look
@@ -311,4 +306,83 @@ Check out these examples of the component in different states.
 </details>
 
 
+### Adding custom CSS classes
+You can easily provide custom css classes for the day components by using the `setDayStyleProvider()` method.
+The method takes a `SerializableFunction<LocalDate, List<String>>` as argument which will be used to
+evaluate the additional classes for a day when rendering the component.
 
+> **Warning**
+> `DayStyleProvider` could cause performance issues!
+>
+> The `DayStyleProvider` may be called quite a few times during the lifetime of a `MiniCalendar`, you should ensure
+> that the backing function **is not an expensive backend operation**, else you could experience some performance issues.
+
+`funky.css`
+```css
+@-webkit-keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {-webkit-transform: translateY(0);}
+    40% {-webkit-transform: translateY(-30px);}
+    60% {-webkit-transform: translateY(-15px);}
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-30px);}
+    60% {transform: translateY(-15px);}
+}
+
+.minicalendar .day.funky {
+    color: var(--lumo-primary-contrast-color);
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    background: linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 1) 0%,
+            rgba(255, 154, 0, 1) 10%,
+            rgba(208, 222, 33, 1) 20%,
+            rgba(79, 220, 74, 1) 30%,
+            rgba(63, 218, 216, 1) 40%,
+            rgba(47, 201, 226, 1) 50%,
+            rgba(28, 127, 238, 1) 60%,
+            rgba(95, 21, 242, 1) 70%,
+            rgba(186, 12, 248, 1) 80%,
+            rgba(251, 7, 217, 1) 90%,
+            rgba(255, 0, 0, 1) 100%
+    );
+}
+
+.bounce:hover {
+    -webkit-animation-name: bounce;
+    animation-name: bounce;
+}
+```
+
+`StyleProviderShowcaseView.java`
+```java
+@Route("/styleprovider")
+@PageTitle("MiniCalendar Showcase")
+@CssImport("css/funky.css")
+public class StyleProviderShowcaseView extends VerticalLayout {
+
+    public StyleProviderShowcaseView() {
+
+        var funkyDays = getFunkyDays();
+
+        var miniCalendar = new MiniCalendar();
+        miniCalendar.setValue(funkyDays.get(0));
+        miniCalendar.addThemeVariants(MiniCalendarVariant.HOVER_DAYS, MiniCalendarVariant.HIGHLIGHT_WEEKEND);
+        miniCalendar.setDayStyleProvider(day -> {
+            if (funkyDays.contains(day)) {
+                return List.of("funky", "bounce");
+            }
+            return null;
+        });
+
+        add(miniCalendar);
+    }
+}
+```
+
+<img src="docs/screens/styleprovider.gif" />
