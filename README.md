@@ -77,12 +77,6 @@ You can combine multiple Theme Variants to change the component's appearance.
 |:------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------:|
 | <img src="docs/screens/default_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
 
-#### Shifted beginning of the week
-
-|                                               Light Mode                                                |                                                  Dark Mode                                                   |
-|:-------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
-
 
 #### Shifted beginning of the week
 
@@ -136,12 +130,6 @@ Check out these examples of the component in different states.
 |:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|
 | <img src="docs/screens/readonly_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
 
-#### Shifted beginning of the week
-
-|                                                Light Mode                                                |                                                   Dark Mode                                                   |
-|:--------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/readonly_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_readonly_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
-
 
 #### Shifted beginning of the week
 
@@ -186,12 +174,6 @@ Check out these examples of the component in different states.
 |                                            Light Mode                                             |                                               Dark Mode                                                |
 |:-------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|
 | <img src="docs/screens/disabled_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
-
-#### Shifted beginning of the week
-
-|                                                Light Mode                                                |                                                   Dark Mode                                                   |
-|:--------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|
-| <img src="docs/screens/disabled_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_disabled_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
 
 
 #### Shifted beginning of the week
