@@ -203,6 +203,9 @@ public class ShowcaseView extends Div implements BeforeEnterListener {
         var themeToggleButton = new Button("Toggle Theme", e -> toggleTheme());
         themeToggleButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
 
+        var todayAsValueButton = new Button("Set Today as Value", e -> miniCalendars.forEach(miniCalendar -> miniCalendar.setValue(LocalDate.now())));
+        todayAsValueButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
+
         var clearValuesButton = new Button("Clear Values", e -> miniCalendars.forEach(miniCalendar -> miniCalendar.setValue(null)));
         clearValuesButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
 
@@ -222,6 +225,7 @@ public class ShowcaseView extends Div implements BeforeEnterListener {
 
         var layout = new HorizontalLayout(
             themeToggleButton,
+            todayAsValueButton,
             clearValuesButton,
             localeSelect,
             syncValueChangeCheckbox,
