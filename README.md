@@ -48,6 +48,21 @@ var registration = miniCalendar.addYearMonthChangeListener(...);
 registration.remove();
 ```
 
+### Dynamically En- or Disable certain days
+You can dynamically en- or disable certain days in the calendar view by setting up a `DayEnabledProvider` with
+`setDayEnabledProvider()`. The method takes a `SerializablePredicate<LoacalDate>` as argument which will be used to
+evaluate the enabled state of a day when rendering the component.
+
+```java
+var disabledDays = getDisabledDays();
+
+var miniCalendar = new MiniCalendar();
+miniCalendar.addThemeVariants(MiniCalendarVariant.HOVER_DAYS, MiniCalendarVariant.HIGHLIGHT_WEEKEND);
+miniCalendar.setDayEnabledProvider(value -> !disabledDays.contains(value));
+```
+
+<img src="docs/screens/disabled_days.gif" />
+
 ## Appearance
 
 ### Theming
