@@ -1,11 +1,18 @@
 # MiniCalendar
 
-MiniCalendar is a [server-only](https://github.com/vaadin/addon-starter-flow) Vaadin component for displaying and
+`MiniCalendar` is a [server-only](https://github.com/vaadin/addon-starter-flow) Vaadin component for displaying and
 selecting `LocalDate` values.
 
-<img src="docs/screens/default_standard.png" alt="Default Standard" width="300" style="border-radius: 10px"/>
-<img src="docs/screens/dark_default_standard.png" alt="Default Standard" width="300" style="border-radius: 10px"/>
+|                                              The *sunny* side 🌞                                              |                                          The *dark* side (of the moon 🌒)                                          |
+|:-------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/default_standard.png" alt="Default Standard" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_standard.png" alt="Default Standard" width="300" style="border-radius: 10px"/> |
 
+## Fundamentals
+The internals are built on the [Java Time API](https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html)
+, the displayed values are localized with the locale that is set for the current UI.
+
+The component implements the `LocaleChangeObserver`. It listens for locale changes and will redraw itself when the
+locale has changed.
 
 ## Features
 
