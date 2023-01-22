@@ -63,6 +63,24 @@ miniCalendar.setDayEnabledProvider(value -> !disabledDays.contains(value));
 
 <img src="docs/screens/disabled_days.gif" />
 
+
+<details>
+    <summary>⚠️ Disabled days can still be selected by the server!</summary>
+Even though a day is disabled in the calendar view, it can still be marked as the selected value from server side.
+
+```java
+var disabledDays = getDisabledDays();
+
+var miniCalendar = new MiniCalendar();
+miniCalendar.setValue(disabledDays.get(0));
+miniCalendar.addThemeVariants(MiniCalendarVariant.HOVER_DAYS, MiniCalendarVariant.HIGHLIGHT_WEEKEND);
+miniCalendar.setDayEnabledProvider(value -> !disabledDays.contains(value));
+```
+<img src="docs/screens/disabled_days_server_value.gif" />
+</details>
+
+
+
 ## Appearance
 
 ### Theming

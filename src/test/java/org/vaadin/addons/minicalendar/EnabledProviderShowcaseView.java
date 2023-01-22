@@ -5,7 +5,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Route("/enabledprovider")
 @PageTitle("MiniCalendar Showcase")
@@ -16,15 +16,16 @@ public class EnabledProviderShowcaseView extends VerticalLayout {
         var disabledDays = getDisabledDays();
 
         var miniCalendar = new MiniCalendar();
+        miniCalendar.setValue(disabledDays.get(0));
         miniCalendar.addThemeVariants(MiniCalendarVariant.HOVER_DAYS, MiniCalendarVariant.HIGHLIGHT_WEEKEND);
         miniCalendar.setDayEnabledProvider(value -> !disabledDays.contains(value));
 
         add(miniCalendar);
     }
 
-    private Set<LocalDate> getDisabledDays() {
+    private List<LocalDate> getDisabledDays() {
         var now = LocalDate.now();
-        return Set.of(
+        return List.of(
             now.plusDays(2),
             now.plusDays(3),
             now.plusDays(4),
