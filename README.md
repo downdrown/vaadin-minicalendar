@@ -1,3 +1,5 @@
+<a href="https://www.buymeacoffee.com/downdrown" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 40px !important; !important;" ></a>
+
 # MiniCalendar
 
 `MiniCalendar` is a [server-only](https://github.com/vaadin/addon-starter-flow) Vaadin component for displaying and
