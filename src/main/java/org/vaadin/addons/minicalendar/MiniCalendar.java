@@ -17,11 +17,13 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.select.SelectVariant;
 import com.vaadin.flow.component.shared.HasThemeVariant;
+import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoIcon;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -65,6 +67,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     /* External Handlers */
     private SerializablePredicate<LocalDate> dayEnabledProvider = null;
+    private SerializableFunction<LocalDate, List<String>> dayStyleProvider = null;
 
 
     /* Constructors */
@@ -170,6 +173,15 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         redraw();
         return () -> {
             this.dayEnabledProvider = null;
+            redraw();
+        };
+    }
+
+    public Registration setDayStyleProvider(SerializableFunction<LocalDate, List<String>> dayStyleProvider) {
+        this.dayStyleProvider = dayStyleProvider;
+        redraw();
+        return () -> {
+            this.dayStyleProvider = null;
             redraw();
         };
     }
@@ -368,6 +380,17 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             component.setEnabled(dayEnabled);
             if (!dayEnabled) {
                 component.addClassName(CSS_DISABLED);
+            }
+        }
+
+        if (dayStyleProvider != null) {
+            var additionalClassNames = dayStyleProvider.apply(forDay);
+            if (additionalClassNames != null) {
+                additionalClassNames.forEach(additionalClassName -> {
+                    if (StringUtils.isNotBlank(additionalClassName)) {
+                        component.addClassName(additionalClassName);
+                    }
+                });
             }
         }
 
