@@ -14,6 +14,9 @@ The internals are built on the [Java Time API](https://docs.oracle.com/javase/8/
 The component implements the `LocaleChangeObserver`. It listens for locale changes and will redraw itself when the
 locale has changed.
 
+It is highly customizable, offers a lot of configuration- and interaction possibilities. You can either use the built-in
+`MiniCalendarVariant` or provide custom CSS classes using the /* TODO StyleProvider */.
+
 ## Features
 
 ### Single Value Selection
@@ -45,4 +48,65 @@ var registration = miniCalendar.addYearMonthChangeListener(...);
 registration.remove();
 ```
 
+### Theming
+The component is based on the [Lumo Theme](https://vaadin.com/docs/latest/styling/lumo), and it's appearance can easily
+be changed by using the built-in [Theme Variants](https://vaadin.com/docs/latest/styling/lumo/variants).
 
+To apply a Theme Variant you simply call the `addThemeVariants()` method.
+
+```java
+miniCalendar.addThemeVariants(MiniCalendarVariant.ROUNDED);
+miniCalendar.addThemeVariants(MiniCalendarVariant.HIGHLIGHT_WEEKEND);
+```
+To remove an already applied Theme Variant simply call the `removeThemeVariants()` method.
+
+```java
+miniCalendar.removeThemeVariants(MiniCalendarVariant.HOVER_DAYS);
+```
+
+You can combine multiple Theme Variants to change the component's appearance.
+
+<details>
+    <summary>Show examples</summary>
+
+#### Highlight weekends
+
+|                                            Light Mode                                            |                                               Dark Mode                                               |
+|:------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/default_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
+
+#### Shifted beginning of the week
+
+|                                               Light Mode                                                |                                                  Dark Mode                                                   |
+|:-------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
+
+
+#### Shifted beginning of the week
+
+|                                               Light Mode                                                |                                                  Dark Mode                                                   |
+|:-------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_shifted_beginning_of_week.png" width="300" style="border-radius: 10px"/> |
+
+
+#### Hover days
+
+|                                        Light Mode                                        |                                           Dark Mode                                           |
+|:----------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/default_hover_days.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_hover_days.png" width="300" style="border-radius: 10px"/> |
+
+
+#### Rounded
+
+|                                      Light Mode                                       |                                         Dark Mode                                          |
+|:-------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/default_rounded.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_rounded.png" width="300" style="border-radius: 10px"/> |
+
+
+#### Rounded, Highlight weekends
+
+|                                                Light Mode                                                |                                                   Dark Mode                                                   |
+|:--------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|
+| <img src="docs/screens/default_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> | <img src="docs/screens/dark_default_rounded_highlight_weekends.png" width="300" style="border-radius: 10px"/> |
+
+</details>
