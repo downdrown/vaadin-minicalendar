@@ -53,6 +53,10 @@ You can dynamically en- or disable certain days in the calendar view by setting 
 `setDayEnabledProvider()`. The method takes a `SerializablePredicate<LoacalDate>` as argument which will be used to
 evaluate the enabled state of a day when rendering the component.
 
+> **Warning**
+> The `DayEnabledProvider` may be called quite a few times during the lifetime of a `MiniCalendar`, you should ensure
+> that the backing function **is not an expensive backend operation**, else you could experience some performance issues.
+
 ```java
 var disabledDays = getDisabledDays();
 
@@ -64,9 +68,16 @@ miniCalendar.setDayEnabledProvider(value -> !disabledDays.contains(value));
 <img src="docs/screens/disabled_days.gif" />
 
 
+
+> **Warning**
+> Disabled days can still be selected by the server!
+>
+> Even though a day is disabled in the calendar view, it can still be marked as the selected value from server side.
+> Disabled days are **not** considered as *invalid value* from the server, the feature's purpose is to indicate valid
+> selections to the user.
+
 <details>
-    <summary>⚠️ Disabled days can still be selected by the server!</summary>
-Even though a day is disabled in the calendar view, it can still be marked as the selected value from server side.
+    <summary>Details</summary>
 
 ```java
 var disabledDays = getDisabledDays();
