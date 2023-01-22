@@ -44,11 +44,16 @@
     line-height: 30px;
 }
 
-.minicalendar[disabled] .day {
+.minicalendar[disabled] .day,
+.minicalendar .day.disabled {
     color: var(--lumo-disabled-text-color);
 }
 
-.minicalendar:not([disabled]) .day:not(.readonly) {
+.minicalendar .day.disabled {
+    cursor: not-allowed;
+}
+
+.minicalendar:not([disabled]) .day:not(.readonly, .disabled) {
     cursor: pointer;
 }
 
@@ -66,11 +71,12 @@
 }
 
 .minicalendar[disabled] .day.selected,
-.minicalendar .day.selected.read-only {
+.minicalendar .day.selected.read-only,
+.minicalendar .day.selected.disabled {
     background-color: var(--lumo-primary-color-10pct);
     color: var(--lumo-tertiary-text-color);
 }
 
-.minicalendar:not([disabled]) .day.hover:not(.readonly):hover {
+.minicalendar:not([disabled]) .day.hover:not(.readonly, .disabled):hover {
     box-shadow: var(--lumo-box-shadow-xs);
 }

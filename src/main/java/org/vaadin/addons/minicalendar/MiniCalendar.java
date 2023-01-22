@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.select.SelectVariant;
 import com.vaadin.flow.component.shared.HasThemeVariant;
+import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.shared.Registration;
@@ -51,6 +52,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private static final String CSS_DAY = "day";
     private static final String CSS_SELECTED = "selected";
     private static final String CSS_READONLY = "readonly";
+    private static final String CSS_DISABLED = "disabled";
     private final VerticalLayout content = new VerticalLayout();
     private final HashMap<LocalDate, Component> dayToComponentMapping = new HashMap<>(31);
     private final List<MiniCalendarVariant> appliedVariants = new ArrayList<>(MiniCalendarVariant.values().length);
@@ -60,6 +62,9 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private Button previousMonthButton = null;
     private Button nextMonthButton = null;
     private Span title = null;
+
+    /* External Handlers */
+    private SerializablePredicate<LocalDate> dayEnabledProvider = null;
 
 
     /* Constructors */
@@ -153,12 +158,20 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         this.firstDayOfWeek = firstDayOfWeek;
         redraw();
     }
-
     public void setYearMonth(YearMonth yearMonth) {
         yearMonthHolder.setValue(yearMonth);
     }
     public Registration addYearMonthChangeListener(ValueChangeListener<ValueChangeEvent<YearMonth>> listener) {
         return yearMonthHolder.addValueChangeListener(listener);
+    }
+
+    public Registration setDayEnabledProvider(SerializablePredicate<LocalDate> dayEnabledProvider) {
+        this.dayEnabledProvider = dayEnabledProvider;
+        redraw();
+        return () -> {
+            this.dayEnabledProvider = null;
+            redraw();
+        };
     }
 
     /* Internal API */
@@ -344,6 +357,14 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
         if (isReadOnly()) {
             component.addClassName(CSS_READONLY);
+        }
+
+        if (dayEnabledProvider != null) {
+            var dayEnabled = dayEnabledProvider.test(forDay);
+            component.setEnabled(dayEnabled);
+            if (!dayEnabled) {
+                component.addClassName(CSS_DISABLED);
+            }
         }
 
         return component;
