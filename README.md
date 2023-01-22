@@ -30,7 +30,7 @@ the user navigates through the months *or* the component gets a new value set wh
 from the previous `YearMonth` value.
 
 ```java
-val miniCalendar = new MiniCalendar();
+var miniCalendar = new MiniCalendar();
 
 miniCalendar.addValueChangeListener(event -> {
     Notification.show("Value changed to " + event.getValue());
