@@ -39,8 +39,7 @@ miniCalendar.addYearMonthChangeListener(event -> {
 });
 ```
 
-When adding a listener you'll get an instance of `Registration` back that which can be used
-to remove said listener again.
+When adding a listener you'll get an instance of `Registration` back which can be used to remove said listener again.
 
 ```java
 var registration = miniCalendar.addYearMonthChangeListener(...);
