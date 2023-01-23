@@ -4,20 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.vaadin.addons.mygroup</groupId>
-    <artifactId>addon-example</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <name>Add-on for Vaadin</name>
-    <description>###Project Name###</description>
+    <groupId>org.vaadin.addons.minicalendar</groupId>
+    <artifactId>minicalendar</artifactId>
+    <version>will-be-set-in-pipeline</version>
+    <name>MiniCalendar Add-on for Vaadin</name>
+    <description>MiniCalendar is a server-only Vaadin component for displaying and selecting LocalDate values.</description>
 
     <properties>
         <vaadin.version>23.3.4</vaadin.version>
-
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8
-        </project.reporting.outputEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <organization>
         <name>Manfred Huber (downdrown)</name>
@@ -136,7 +134,7 @@
                     <excludes>
                         <exclude>META-INF/VAADIN/config/flow-build-info.json</exclude>
                     </excludes>
-                </configuration>                     
+                </configuration>
             </plugin>
 
             <plugin>
