@@ -20,7 +20,14 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Prepare environment
-        run: echo "TAG=${{ $GITHUB_REF | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
+        run: |
+          echo "TAG1=${{ GITHUB_REF | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
+          echo "TAG2=${{ GITHUB_REF_NAME | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
+
+      - name: Print env
+        run: |
+          echo $TAG1
+          echo $TAG2
 
       - name: Add execution permissions to mvnw
         run: chmod +x mvnw
