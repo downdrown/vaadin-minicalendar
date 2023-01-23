@@ -13,15 +13,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Prepare environment
-        run: echo "TAG_NAME={$GITHUB_REF | awk -F/ '{print $NF}'}" >> $GITHUB_ENV
+        run: echo "TAG=${{ $GITHUB_REF | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
 
       - name: Add execution permissions to mvnw
         run: chmod +x mvnw
 
       - name: Set Release Version
         run: |
-          ./mvnw versions:set -DnewVersion="$TAG_NAME"
+          echo "Setting the release version to ${{ env.TAG }}"
+          ./mvnw versions:set -DnewVersion="${{ env.TAG }}"
           ./mvnw versions:commit
 
       - name: Build component
@@ -32,7 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          asset_path: target/minicalendar-$TAG_NAME.jar
-          asset_name: minicalendar-$TAG_NAME.jar
+          asset_path: target/minicalendar-${{ env.TAG }}.jar
+          asset_name: minicalendar-${{ env.TAG }}.jar
           asset_content_type: application/java-archive
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
