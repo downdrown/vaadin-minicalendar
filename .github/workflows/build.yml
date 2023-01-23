@@ -13,23 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Make mvnw executable
+      - name: Add execution permissions to mvnw
         run: chmod +x mvnw
-
-      - name: Save tag name as environment var
-        run: echo ::set-env name=TAG::$(echo $GITHUB_REF | awk -F/ '{print $NF}')
-        env:
-          GITHUB_REF: ${{ env.GITHUB_REF }}
 
       - name: Set Release Version
         run: |
-          ./mvnw versions:set -DnewVersion="$TAG"
+          ./mvnw versions:set -DnewVersion="$GITHUB_REF | awk -F/ '{print $NF}'"
           ./mvnw versions:commit
-          echo "Set release version to $TAG"
 
       - name: Build component
-        run: |
-          ./mvnw install -Pdirectory
+        run: ./mvnw install -Pdirectory
 
       - name: Deploy to GitHub releases
         uses: actions/upload-release-asset@v1
