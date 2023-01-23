@@ -19,23 +19,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Prepare environment
-        run: |
-          echo "TAG1=${{ $GITHUB_REF | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
-          echo "TAG2=${{ $GITHUB_REF_NAME | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
 
       - name: Print env
         run: |
-          echo $TAG1
-          echo $TAG2
+          echo ${{ github.ref_name }}
 
       - name: Add execution permissions to mvnw
         run: chmod +x mvnw
 
       - name: Set Release Version
         run: |
-          echo "Setting the release version to ${{ env.TAG }}"
-          ./mvnw versions:set -DnewVersion="${{ env.TAG }}"
+          echo "Setting the release version to ${{ github.ref_name }}"
+          ./mvnw versions:set -DnewVersion="${{ github.ref_name }}"
           ./mvnw versions:commit
 
       - name: Build component
@@ -46,7 +41,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          asset_path: target/minicalendar-${{ env.TAG }}.jar
-          asset_name: minicalendar-${{ env.TAG }}.jar
+          asset_path: target/minicalendar-${{ github.ref_name }}.jar
+          asset_name: minicalendar-${{ github.ref_name }}.jar
           asset_content_type: application/java-archive
           upload_url: ${{ steps.get_release.outputs.upload_url }}
