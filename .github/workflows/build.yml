@@ -18,10 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Get the tag name
-        run: echo "Tag name is $GITHUB_REF"
+      - name: Save tag name as environment var
+        run: echo ::set-env name=TAG::$(echo $GITHUB_REF | awk -F/ '{print $NF}')
         env:
-          TAG: ${{ env.GITHUB_REF | awk -F/ '{print $NF}' }}
+          GITHUB_REF: ${{ env.GITHUB_REF }}
 
       - name: Set Release Version
         run: |
