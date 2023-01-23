@@ -21,7 +21,7 @@ jobs:
       - name: Get the tag name
         run: echo "Tag name is $GITHUB_REF"
         env:
-          TAG: ${{ env.GITHUB_REF }}
+          TAG: ${{ env.GITHUB_REF | awk -F/ '{print $NF}' }}
 
       - name: Set Release Version
         run: |
