@@ -21,8 +21,8 @@ jobs:
 
       - name: Prepare environment
         run: |
-          echo "TAG1=${{ GITHUB_REF | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
-          echo "TAG2=${{ GITHUB_REF_NAME | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
+          echo "TAG1=${{ $GITHUB_REF | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
+          echo "TAG2=${{ $GITHUB_REF_NAME | awk -F/ '{print $NF}' }}" >> $GITHUB_ENV
 
       - name: Print env
         run: |
