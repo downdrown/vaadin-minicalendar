@@ -1,35 +1,22 @@
 name: Build and Release
 
 on:
-  push:
-    tags:
-      - "*"
+  release:
+    types: [published]
 
 jobs:
-  build:
+  Release:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.3.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-
-      - name: Print env
-        run: |
-          echo ${{ github.ref_name }}
-
-      - name: Add execution permissions to mvnw
+      - name: Prepare Environment
         run: chmod +x mvnw
 
       - name: Set Release Version
         run: |
-          echo "Setting the release version to ${{ github.ref_name }}"
           ./mvnw versions:set -DnewVersion="${{ github.ref_name }}"
           ./mvnw versions:commit
 
@@ -44,4 +31,4 @@ jobs:
           asset_path: target/minicalendar-${{ github.ref_name }}.jar
           asset_name: minicalendar-${{ github.ref_name }}.jar
           asset_content_type: application/java-archive
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
