@@ -1,0 +1,39 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get the tag name
+        run: echo "Tag name is $GITHUB_REF"
+        env:
+          TAG: ${{ env.GITHUB_REF }}
+
+      - name: Set Release Version
+        run: |
+          ./mvnw versions:set -DnewVersion="$TAG"
+          ./mvnw versions:commit
+          echo "Set release version to $TAG"
+
+      - name: Build component
+        run: |
+          ./mvnw install -Pdirectory
+
+      - name: Deploy to GitHub releases
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/minicalendar-$TAG.jar
+          asset_name: minicalendar-$TAG.jar
+          asset_content_type: application/java-archive
