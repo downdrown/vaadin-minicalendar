@@ -10,13 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Environment Setup
-        run : |
-          chmod +x mvnw
-          echo "Environment is all set up."
-
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Make mvnw executable
+        run: chmod +x mvnw
 
       - name: Save tag name as environment var
         run: echo ::set-env name=TAG::$(echo $GITHUB_REF | awk -F/ '{print $NF}')
