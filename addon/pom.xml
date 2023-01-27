@@ -11,9 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.vaadin.addons.minicalendar</groupId>
-    <artifactId>minicalendar</artifactId>
-    <version>will-be-set-in-pipeline</version>
+    <artifactId>addon</artifactId>
 
     <dependencies>
         <dependency>
@@ -24,23 +22,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <defaultGoal>jetty:run</defaultGoal>
+        <finalName>minicalendar-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,8 +37,7 @@
                         <index>true</index>
                         <manifest>
                             <addClasspath>false</addClasspath>
-                            <addDefaultImplementationEntries>true
-                            </addDefaultImplementationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
                             <Vaadin-Package-Version>1</Vaadin-Package-Version>
@@ -62,21 +47,6 @@
                     <excludes>
                         <exclude>META-INF/VAADIN/config/flow-build-info.json</exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.4.28.v20200408</version>
-                <configuration>
-                    <scanIntervalSeconds>-1</scanIntervalSeconds>
-                    <!-- Use test scope because the UI/test classes are in
-                        the test package. -->
-                    <useTestScope>true</useTestScope>
-                    <supportedPackagings>
-                        <supportedPackaging>jar</supportedPackaging>
-                    </supportedPackagings>
                 </configuration>
             </plugin>
 

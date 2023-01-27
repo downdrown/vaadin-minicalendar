@@ -386,3 +386,8 @@ public class StyleProviderShowcaseView extends VerticalLayout {
 ```
 
 <img src="docs/screens/styleprovider.gif" />
+
+
+## Showcase
+The project contains a showcase module that displays some usages of the Add-on.
+To start the showcase check out the repository and run `./mvnw jetty:run -pl :showcase` in the root directory.
