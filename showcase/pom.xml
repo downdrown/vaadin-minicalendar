@@ -41,7 +41,7 @@
                 <configuration>
                     <scanIntervalSeconds>-1</scanIntervalSeconds>
                     <supportedPackagings>
-                        <supportedPackaging>jar</supportedPackaging>
+                        <supportedPackaging>war</supportedPackaging>
                     </supportedPackagings>
                 </configuration>
             </plugin>
