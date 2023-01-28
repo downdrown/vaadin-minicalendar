@@ -18,6 +18,9 @@
     border-radius: 3px;
 }
 
+[theme~="dark"] .pulse {
+    animation: pulse-animation-dark 2s infinite;
+}
 
 @keyframes pulse-animation {
     0% {
@@ -30,9 +33,9 @@
 
 @keyframes pulse-animation-dark {
     0% {
-        box-shadow: 0 0 0 0 #fff;
+        box-shadow: 0 0 0 0 rgba(231, 234, 238, 0.2);
     }
     100% {
-        box-shadow: 0 0 0 15px #fff;
+        box-shadow: 0 0 0 15px rgba(231, 234, 238, 0);
     }
 }
