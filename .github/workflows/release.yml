@@ -20,15 +20,28 @@ jobs:
           ./mvnw versions:set -DnewVersion="${{ github.ref_name }}"
           ./mvnw versions:commit
 
-      - name: Build component
-        run: ./mvnw install -Pdirectory
+      - name: Build Add-on
+        run: ./mvnw -Pdirectory -pl :addon install
 
-      - name: Deploy to GitHub releases
+      - name: Build Showcase
+        run: ./mvnw -Pproduction -pl :showcase install
+
+      - name: Deploy Add-on to GitHub releases
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          asset_path: target/minicalendar-${{ github.ref_name }}.zip
+          asset_path: addon/target/minicalendar-${{ github.ref_name }}.zip
           asset_name: minicalendar-${{ github.ref_name }}.zip
           asset_content_type: application/zip
+          upload_url: ${{ github.event.release.upload_url }}
+
+      - name: Deploy Showcase to GitHub releases
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_path: showcase/target/minicalendar-showcase-${{ github.ref_name }}.war
+          asset_name: minicalendar-showcase-${{ github.ref_name }}.war
+          asset_content_type: application/java-archive
           upload_url: ${{ github.event.release.upload_url }}

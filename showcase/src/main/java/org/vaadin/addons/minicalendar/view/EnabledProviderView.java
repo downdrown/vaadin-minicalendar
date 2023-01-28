@@ -1,17 +1,22 @@
-package org.vaadin.addons.minicalendar;
+package org.vaadin.addons.minicalendar.view;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.vaadin.addons.minicalendar.MiniCalendar;
+import org.vaadin.addons.minicalendar.MiniCalendarVariant;
+import org.vaadin.addons.minicalendar.layout.ShowCaseLayout;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Route("/enabledprovider")
-@PageTitle("MiniCalendar Showcase")
-public class EnabledProviderShowcaseView extends VerticalLayout {
+import static org.vaadin.addons.minicalendar.i18n.I18NUtils.i18n;
 
-    public EnabledProviderShowcaseView() {
+@Route(value = "/enabledprovider", layout = ShowCaseLayout.class)
+public class EnabledProviderView extends VerticalLayout implements HasDynamicTitle {
+
+    public EnabledProviderView() {
 
         var disabledDays = getDisabledDays();
 
@@ -21,6 +26,11 @@ public class EnabledProviderShowcaseView extends VerticalLayout {
         miniCalendar.setDayEnabledProvider(value -> !disabledDays.contains(value));
 
         add(miniCalendar);
+    }
+
+    @Override
+    public String getPageTitle() {
+        return i18n("enabledprovider.title");
     }
 
     private List<LocalDate> getDisabledDays() {

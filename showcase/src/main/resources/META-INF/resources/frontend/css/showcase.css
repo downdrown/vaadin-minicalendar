@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Waiting+for+the+Sunrise&display=swap');
+
+.navtitle {
+    color: var(--lumo-contrast-70pct);
+    font-size: var(--lumo-font-size-xxl);
+    font-family: 'Waiting for the Sunrise', cursive;
+    left: var(--lumo-space-l);
+    margin: 0;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.pulse {
+    animation: pulse-animation 2s infinite;
+    border-radius: 3px;
+}
+
+
+@keyframes pulse-animation {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 15px rgba(0, 0, 0, 0);
+    }
+}
+
+@keyframes pulse-animation-dark {
+    0% {
+        box-shadow: 0 0 0 0 #fff;
+    }
+    100% {
+        box-shadow: 0 0 0 15px #fff;
+    }
+}
