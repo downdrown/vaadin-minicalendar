@@ -24,6 +24,12 @@
             <artifactId>slf4j-simple</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.vaadin.addons.minicalendar</groupId>
             <artifactId>addon</artifactId>
             <version>${project.version}</version>
