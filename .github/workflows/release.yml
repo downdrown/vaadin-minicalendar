@@ -33,11 +33,10 @@ jobs:
           ./mvnw versions:set -DnewVersion="${{ github.ref_name }}"
           ./mvnw versions:commit
 
-      - name: Build Add-on
-        run: ./mvnw -Pdirectory -pl :addon install
-
-      - name: Build Showcase
-        run: ./mvnw -Pproduction -pl :showcase install
+      - name: Build Add-on & Showcase
+        run: |
+          ./mvnw -Pdirectory -pl :addon install
+          ./mvnw -Pproduction -pl :showcase install
 
       - name: Deploy Add-on to GitHub releases
         uses: actions/upload-release-asset@v1
