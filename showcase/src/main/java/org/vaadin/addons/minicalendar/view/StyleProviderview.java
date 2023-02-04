@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.vaadin.addons.minicalendar.i18n.I18NUtils.i18n;
 
-@CssImport("css/funky.css")
+@CssImport("./css/funky.css")
 @Route(value = "/styleprovider", layout = ShowCaseLayout.class)
 public class StyleProviderview extends VerticalLayout implements HasDynamicTitle {
 

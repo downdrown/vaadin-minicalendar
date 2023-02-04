@@ -17,7 +17,7 @@ import static org.vaadin.addons.minicalendar.i18n.I18NUtils.i18n;
 import static org.vaadin.addons.minicalendar.util.ComponentUtils.fromDefinition;
 import static org.vaadin.addons.minicalendar.util.ComponentUtils.header;
 
-@CssImport("css/other.css")
+@CssImport("./css/other.css")
 @Route(value = "/other", layout = ShowCaseLayout.class)
 public class OtherExamplesView extends Div implements HasDynamicTitle {
 

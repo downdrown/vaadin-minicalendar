@@ -46,7 +46,7 @@ import java.util.Set;
  *
  * @author Manfred Huber
  */
-@CssImport("minicalendar.css")
+@CssImport("./minicalendar.css")
 public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVariant<MiniCalendarVariant>, LocaleChangeObserver {
 
     private static final String CSS_BASE = "minicalendar";
