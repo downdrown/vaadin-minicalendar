@@ -1,0 +1,7 @@
+.rotated-header .minicalendar .weekday {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    padding-bottom: 5px;
+    height: fit-content !important;
+    text-align: start !important;
+}
