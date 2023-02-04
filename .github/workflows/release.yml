@@ -12,19 +12,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
       - name: Prepare Environment
         run: chmod +x mvnw
 
       - name: Set Release Version
         run: |
-          ./mvnw versions:set -DnewVersion="${{ github.ref_name }}"
-          ./mvnw versions:commit
+          ./mvnw --batch-mode versions:set -DnewVersion="${{ github.ref_name }}"
+          ./mvnw --batch-mode versions:commit
+
+      - name: Build Reactor
+        run: ./mvnw --batch-mode -pl '!addon,!showcase' install
 
       - name: Build Add-on
-        run: ./mvnw -Pdirectory -pl :addon install
+        run: ./mvnw --batch-mode -Pdirectory -pl :addon install
 
       - name: Build Showcase
-        run: ./mvnw -Pproduction -pl :showcase install
+        run: ./mvnw --batch-mode -Pproduction -pl :showcase install
 
       - name: Deploy Add-on to GitHub releases
         uses: actions/upload-release-asset@v1
