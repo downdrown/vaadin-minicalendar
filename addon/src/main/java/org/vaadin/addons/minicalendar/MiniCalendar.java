@@ -60,6 +60,8 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private final List<MiniCalendarVariant> appliedVariants = new ArrayList<>(MiniCalendarVariant.values().length);
     private final YearMonthHolder yearMonthHolder = new YearMonthHolder();
     private DayOfWeek firstDayOfWeek = getFirstDayOfWeekByLocale(getLocale());
+    private TextStyle dayTextStyle = TextStyle.SHORT_STANDALONE;
+    private TextStyle monthTextStyle = TextStyle.FULL;
     private Span selectedComponent = null;
     private Button previousMonthButton = null;
     private Button nextMonthButton = null;
@@ -161,11 +163,23 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         this.firstDayOfWeek = firstDayOfWeek;
         redraw();
     }
+
     public void setYearMonth(YearMonth yearMonth) {
         yearMonthHolder.setValue(yearMonth);
     }
+
     public Registration addYearMonthChangeListener(ValueChangeListener<ValueChangeEvent<YearMonth>> listener) {
         return yearMonthHolder.addValueChangeListener(listener);
+    }
+
+    public void setDayTextStyle(TextStyle dayTextStyle) {
+        this.dayTextStyle = dayTextStyle;
+        redraw();
+    }
+
+    public void setMonthTextStyle(TextStyle monthTextStyle) {
+        this.monthTextStyle = monthTextStyle;
+        redraw();
     }
 
     public Registration setDayEnabledProvider(SerializablePredicate<LocalDate> dayEnabledProvider) {
@@ -217,7 +231,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         nextMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         nextMonthButton.setVisible(!isReadOnly());
 
-        title = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " + yearMonthHolder.getValue().getYear());
+        title = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()) + " " + yearMonthHolder.getValue().getYear());
         title.addClassName("title");
         title.addClickListener(e -> showYearSelection());
 
@@ -243,7 +257,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         var _firstDayOfWeek = firstDayOfWeek;
 
         do {
-            Span weekDay = span(_firstDayOfWeek.getDisplayName(TextStyle.SHORT_STANDALONE, getLocale()));
+            Span weekDay = span(_firstDayOfWeek.getDisplayName(dayTextStyle, getLocale()));
             weekDay.addClassName(CSS_WEEKDAY);
             weekDays.add(weekDay);
             _firstDayOfWeek = _firstDayOfWeek.plus(1);

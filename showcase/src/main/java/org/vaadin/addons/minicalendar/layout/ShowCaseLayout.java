@@ -34,8 +34,10 @@ import elemental.json.impl.JreJsonString;
 import org.vaadin.addons.minicalendar.Configuration;
 import org.vaadin.addons.minicalendar.view.View;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static org.vaadin.addons.minicalendar.i18n.I18NUtils.i18n;
 
@@ -106,16 +108,18 @@ public class ShowCaseLayout extends AppLayout {
         tabs.setAutoselect(false);
         tabs.getStyle()
             .set("margin", "auto");
-        tabs.add(
-            tab(tabs, i18n("nav.overview"), View.Overview),
-            tab(tabs, i18n("nav.enabled-provider"), View.EnabledProvider),
-            tab(tabs, i18n("nav.style-provider"), View.StyleProvider)
-        );
+        tabs.add(navigationItems(tabs));
 
         return tabs;
     }
 
-    private static Tab tab(Tabs tabs, String viewName, View view) {
+    private static List<Component> navigationItems(Tabs tabs) {
+        return Arrays.stream(View.values())
+            .map(view -> navigationTab(tabs, i18n(view.getI18nKey()), view))
+            .collect(Collectors.toList());
+    }
+
+    private static Tab navigationTab(Tabs tabs, String viewName, View view) {
 
         var link = new RouterLink(view.getNavigationTarget());
         link.setHighlightCondition(HighlightConditions.sameLocation());

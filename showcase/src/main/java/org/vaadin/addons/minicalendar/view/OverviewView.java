@@ -7,7 +7,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -22,6 +21,7 @@ import org.vaadin.addons.minicalendar.Constants;
 import org.vaadin.addons.minicalendar.MiniCalendar;
 import org.vaadin.addons.minicalendar.MiniCalendarVariant;
 import org.vaadin.addons.minicalendar.layout.ShowCaseLayout;
+import org.vaadin.addons.minicalendar.util.ComponentUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -30,14 +30,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.format.TextStyle;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static org.vaadin.addons.minicalendar.MiniCalendarVariant.HIGHLIGHT_WEEKEND;
 import static org.vaadin.addons.minicalendar.MiniCalendarVariant.HOVER_DAYS;
 import static org.vaadin.addons.minicalendar.MiniCalendarVariant.ROUNDED;
 import static org.vaadin.addons.minicalendar.i18n.I18NUtils.i18n;
-import static org.vaadin.addons.minicalendar.util.ComponentUtils.labelWithStyles;
 
 @Route(value = "/", layout = ShowCaseLayout.class)
 @RouteAlias(value = "/overview", layout = ShowCaseLayout.class)
@@ -141,7 +139,7 @@ public class OverviewView extends Div implements HasDynamicTitle {
         final var roundedHighlightWeekends =  i18n("overview.variant.rounded-highlight-weekends");
 
         var viewLayout = new VerticalLayout(
-            header(i18n("overview.style.default")),
+            ComponentUtils.header(i18n("overview.style.default")),
             row(miniCalendar(standard),
                 miniCalendar(highlightWeekends, highlightWeekend),
                 miniCalendar(shiftedBeginningOfWeek, shiftedWeekStart),
@@ -150,7 +148,7 @@ public class OverviewView extends Div implements HasDynamicTitle {
                 miniCalendar(roundedHighlightWeekends, ROUNDED, HIGHLIGHT_WEEKEND)
             ),
 
-            header(i18n("overview.style.readonly")),
+            ComponentUtils.header(i18n("overview.style.readonly")),
             row(miniCalendar(standard, true, true),
                 miniCalendar(highlightWeekends, readOnlyHighlightWeekend),
                 miniCalendar(shiftedBeginningOfWeek, readOnlyShiftedWeekStart),
@@ -159,7 +157,7 @@ public class OverviewView extends Div implements HasDynamicTitle {
                 miniCalendar(roundedHighlightWeekends, true, true, ROUNDED, HIGHLIGHT_WEEKEND)
             ),
 
-            header(i18n("overview.style.disabled")),
+            ComponentUtils.header(i18n("overview.style.disabled")),
             row(miniCalendar(standard, false),
                 miniCalendar(highlightWeekends, disabledHighlightWeekend),
                 miniCalendar(shiftedBeginningOfWeek, disabledShiftedWeekStart),
@@ -167,7 +165,7 @@ public class OverviewView extends Div implements HasDynamicTitle {
                 miniCalendar(rounded, false, ROUNDED),
                 miniCalendar(roundedHighlightWeekends, false, ROUNDED, HIGHLIGHT_WEEKEND)),
 
-            header(i18n("overview.style.disabled-readonly")),
+            ComponentUtils.header(i18n("overview.style.disabled-readonly")),
             row(miniCalendar(standard, false, true),
                 miniCalendar(highlightWeekends, disabledReadOnlyHighlightWeekend),
                 miniCalendar(shiftedBeginningOfWeek, disabledReadOnlyShiftedWeekStart),
@@ -230,16 +228,6 @@ public class OverviewView extends Div implements HasDynamicTitle {
         layout.setMargin(false);
         layout.setSpacing(true);
         return layout;
-    }
-
-    private static Component header(String header) {
-        return labelWithStyles(
-            header,
-            Map.of(
-                "font-size", "var(--lumo-font-size-l)",
-                "color", "var(--lumo-primary-text-color)"
-            )
-        );
     }
 
     private Component miniCalendar(String description, MiniCalendarVariant... variants) {
