@@ -41,8 +41,8 @@ import java.util.stream.Collectors;
 
 import static org.vaadin.addons.minicalendar.i18n.I18NUtils.i18n;
 
-@CssImport("css/showcase.css")
-@JsModule("js/os-theme-module.js")
+@CssImport("./css/showcase.css")
+@JsModule("./js/os-theme-module.js")
 @PreserveOnRefresh
 public class ShowCaseLayout extends AppLayout {
 
