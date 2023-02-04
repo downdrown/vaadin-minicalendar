@@ -6,16 +6,15 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.combobox.ComboBoxVariant;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.select.SelectVariant;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.function.SerializablePredicate;
@@ -27,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
@@ -65,7 +65,8 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private Span selectedComponent = null;
     private Button previousMonthButton = null;
     private Button nextMonthButton = null;
-    private Span title = null;
+    private Span monthTitle = null;
+    private Span yearTitle = null;
 
     /* External Handlers */
     private SerializablePredicate<LocalDate> dayEnabledProvider = null;
@@ -122,7 +123,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
                 toggleStyle(styledComponent, CSS_READONLY);
             }
         }
-        toggleStyle(title, CSS_READONLY);
+        toggleStyle(yearTitle, CSS_READONLY);
         previousMonthButton.setVisible(!readOnly);
         nextMonthButton.setVisible(!readOnly);
     }
@@ -231,22 +232,49 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         nextMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         nextMonthButton.setVisible(!isReadOnly());
 
-        title = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()) + " " + yearMonthHolder.getValue().getYear());
-        title.addClassName("title");
-        title.addClickListener(e -> showYearSelection());
+        monthTitle = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()));
+        monthTitle.addClassName("title");
+
+        yearTitle = new Span(String.valueOf(yearMonthHolder.getValue().getYear()));
+        yearTitle.addClassName("title");
 
         if (isReadOnly()) {
-            title.addClassName(CSS_READONLY);
+            monthTitle.addClassName(CSS_READONLY);
+            yearTitle.addClassName(CSS_READONLY);
         }
 
-        var titleLayout = new HorizontalLayout(previousMonthButton, title, nextMonthButton);
+        var monthYearTitleLayout = new HorizontalLayout(monthTitle, yearTitle);
+        monthYearTitleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        monthYearTitleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        monthYearTitleLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        monthYearTitleLayout.setWidth(null);
+        monthYearTitleLayout.setMargin(false);
+        monthYearTitleLayout.setPadding(false);
+        monthYearTitleLayout.setSpacing(true);
 
+        var titleLayout = new HorizontalLayout(previousMonthButton, monthYearTitleLayout, nextMonthButton);
         titleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        titleLayout.setWidthFull();
         titleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        titleLayout.setWidthFull();
         titleLayout.setSpacing(true);
         titleLayout.setHeight(30, Unit.PIXELS);
-        titleLayout.expand(title);
+        titleLayout.expand(monthYearTitleLayout);
+
+        monthTitle.addClickListener(event -> {
+            if (isInteractionDisabled()) {
+                return;
+            }
+            var monthSelection = monthSelect();
+            monthYearTitleLayout.replace(monthTitle, monthSelection);
+        });
+
+        yearTitle.addClickListener(event -> {
+            if (isInteractionDisabled()) {
+                return;
+            }
+            var yearSelection = yearSelection();
+            monthYearTitleLayout.replace(yearTitle, yearSelection);
+        });
 
         content.add(titleLayout);
     }
@@ -300,24 +328,49 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         addRow(dayComponents);
     }
 
-    private void showYearSelection() {
+    private Component monthSelect() {
 
-        if (isInteractionDisabled()) {
-            return;
-        }
+        var monthSelect = new ComboBox<Month>();
+        monthSelect.setItemLabelGenerator(month -> month.getDisplayName(monthTextStyle, getLocale()));
+        monthSelect.setMaxWidth(4, Unit.REM);
+        monthSelect.addThemeVariants(ComboBoxVariant.LUMO_SMALL);
+        monthSelect.setItems(Month.values());
+        monthSelect.setValue(yearMonthHolder.getValue().getMonth());
+        monthSelect.setOpened(true);
+        monthSelect.getStyle()
+            .set("--vaadin-combo-box-overlay-width", "10rem")
+            .set("--vaadin-combo-box-overlay-max-height", "8rem");
 
-        var yearSelect = new Select<Year>();
-        yearSelect.addThemeVariants(SelectVariant.LUMO_SMALL);
+        monthSelect.addValueChangeListener(event ->
+            yearMonthHolder.setValueFromClient(Year.of(yearMonthHolder.getValue().getYear()).atMonth(event.getValue()))
+        );
+
+        return monthSelect;
+    }
+
+    private Component yearSelection() {
+
+        var yearSelect = new ComboBox<Year>();
+        yearSelect.setMaxWidth(4, Unit.REM);
+        yearSelect.addThemeVariants(ComboBoxVariant.LUMO_SMALL);
         yearSelect.setItems(evaluateEligibleYears());
+        yearSelect.setAllowCustomValue(true);
+        yearSelect.setAllowedCharPattern("\\d");
         yearSelect.setValue(Year.of(yearMonthHolder.getValue().getYear()));
+        yearSelect.setOpened(true);
+        yearSelect.getStyle()
+            .set("--vaadin-combo-box-overlay-width", "8rem")
+            .set("--vaadin-combo-box-overlay-max-height", "8rem");
 
-        var selectionDialog = new Dialog(yearSelect);
-        selectionDialog.open();
-
-        yearSelect.addValueChangeListener(event -> {
-            yearMonthHolder.setValueFromClient(event.getValue().atMonth(yearMonthHolder.getValue().getMonth()));
-            selectionDialog.close();
+        yearSelect.addCustomValueSetListener(event -> {
+            var selectedYear = Year.parse(event.getDetail());
+            yearSelect.setValue(selectedYear);
         });
+        yearSelect.addValueChangeListener(event ->
+            yearMonthHolder.setValueFromClient(event.getValue().atMonth(yearMonthHolder.getValue().getMonth()))
+        );
+
+        return yearSelect;
     }
 
     private void navigateToPreviousMonth() {
@@ -333,8 +386,8 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private List<Year> evaluateEligibleYears() {
 
-        var minYear = yearMonthHolder.getValue().getYear() - 100;
-        var maxYear = yearMonthHolder.getValue().getYear() + 100;
+        var minYear = yearMonthHolder.getValue().getYear() - 10;
+        var maxYear = yearMonthHolder.getValue().getYear() + 10;
         var eligibleYears = new ArrayList<Year>(201);
 
         for (int year = minYear; year < maxYear; year++) {
