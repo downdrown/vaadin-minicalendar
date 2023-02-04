@@ -12,12 +12,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Setup Maven cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.OS }}-mvn-cache-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.OS }}-mvn-cache-
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'maven'
 
       - name: Prepare Environment
         run: chmod +x mvnw
