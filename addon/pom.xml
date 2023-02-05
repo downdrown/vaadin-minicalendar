@@ -12,6 +12,7 @@
     </parent>
 
     <artifactId>addon</artifactId>
+    <name>MiniCalendar Add-on for Vaadin</name>
 
     <dependencies>
         <dependency>
