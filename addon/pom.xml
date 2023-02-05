@@ -162,6 +162,11 @@
                         <artifactId>maven-jar-plugin</artifactId>
                         <version>3.2.2</version>
                         <configuration>
+                            <archive>
+                                <manifestEntries>
+                                    <Implementation-Title>MiniCalendar Add-on for Vaadin</Implementation-Title>
+                                </manifestEntries>
+                            </archive>
                             <!-- Generated file that shouldn't be included in add-ons -->
                             <excludes>
                                 <exclude>
