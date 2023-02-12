@@ -1,8 +1,8 @@
-ARG PORT
-
 FROM eclipse-temurin:17-jre-alpine
 
-ENV PORT=8080
+ARG PORT_ARG=8080
+
+ENV PORT=$PORT_ARG
 ENV JETTY_VERSION=9.4.50.v20221201
 
 RUN apk add --no-cache bash curl tar && \
