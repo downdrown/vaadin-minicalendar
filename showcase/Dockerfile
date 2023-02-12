@@ -1,0 +1,10 @@
+FROM eclipse-temurin:17-jre-alpine
+RUN apk add --no-cache bash curl tar && \
+    curl https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.50.v20221201/jetty-distribution-9.4.50.v20221201.tar.gz -o jetty.tar.gz && \
+    tar xvf jetty.tar.gz && \
+    mv jetty-distribution-9.4.50.v20221201 /jetty && \
+    rm jetty.tar.gz
+COPY target/minicalendar-showcase-*.war /jetty/webapps/ROOT.war
+WORKDIR /jetty
+ENTRYPOINT ["./bin/jetty.sh", "run"]
+EXPOSE 8080
