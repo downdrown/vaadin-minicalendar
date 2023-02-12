@@ -10,7 +10,7 @@ on:
         required: true
 
 jobs:
-  Deploy to Railway:
+  Deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
