@@ -1,8 +1,8 @@
 FROM eclipse-temurin:17-jre-alpine
 
-ARG PORT_ARG=8080
+ARG PORT=8080
 
-ENV PORT=$PORT_ARG
+ENV JETTY_PORT=$PORT
 ENV JETTY_VERSION=9.4.50.v20221201
 
 RUN apk add --no-cache bash curl tar && \
@@ -14,5 +14,5 @@ RUN apk add --no-cache bash curl tar && \
 COPY target/minicalendar-showcase-*.war /jetty/webapps/ROOT.war
 
 WORKDIR /jetty
-ENTRYPOINT ["./bin/jetty.sh", "run", "--module=http", "--http-port=$PORT"]
-EXPOSE $PORT
+ENTRYPOINT ["./bin/jetty.sh", "run", "--module=http", "--http-port=$JETTY_PORT"]
+EXPOSE $JETTY_PORT
