@@ -1,3 +1,5 @@
+ARG PORT
+
 FROM eclipse-temurin:17-jre-alpine
 
 ENV PORT=8080
