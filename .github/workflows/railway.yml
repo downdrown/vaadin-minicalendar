@@ -1,0 +1,45 @@
+name: Deploy to Railway
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'The branch that should be deployed to Railway'
+        type: string
+        default: v23
+        required: true
+
+jobs:
+  Deploy to Railway:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: $BRANCH
+        env:
+          BRANCH: ${{ inputs.branch }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Prepare Environment
+        run: chmod +x mvnw
+
+      - name: Build Reactor
+        run: ./mvnw --batch-mode -pl '!addon,!showcase' install
+
+      - name: Build Showcase
+        run: ./mvnw --batch-mode -Pproduction -pl :showcase install
+
+      - name: Install Railway CLI
+        run: curl -fsSL https://railway.app/install.sh | sh
+
+      - name: Deploy to Railway
+        run: cd showcase && railway up
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
