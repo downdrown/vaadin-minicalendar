@@ -1,13 +1,11 @@
 name: Deploy to Railway
 
-on:
+on: 
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'The branch that should be deployed to Railway'
-        type: string
-        default: v23
-        required: true
+  workflow_run:
+    workflows: [ Release ]
+    types:
+      - completed
 
 jobs:
   Deploy:
@@ -16,9 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ env.BRANCH }}
-        env:
-          BRANCH: ${{ inputs.branch }}
+          ref: ${{ github.ref_name }}
 
       - name: Setup Java
         uses: actions/setup-java@v3
