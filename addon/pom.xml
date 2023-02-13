@@ -108,6 +108,25 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>com.igormaznitsa</groupId>
+                        <artifactId>uber-pom</artifactId>
+                        <version>1.0.3</version>
+                        <configuration>
+                            <remove>
+                                <section>parent</section>
+                                <section>modules</section>
+                            </remove>
+                            <removeSiblingDuplications>true</removeSiblingDuplications>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>upom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <version>3.3.0</version>
