@@ -1,16 +1,34 @@
 FROM eclipse-temurin:17-jre-alpine
 
-ENV JETTY_PORT=8080
-ENV JETTY_VERSION=11.0.14
+ENV HTTP_PORT=8080
+ENV TOMCAT_MAJOR=10
+ENV TOMCAT_VERSION=10.1.7
+ENV TOMCAT_TGZ_URL=https://dlcdn.apache.org/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
+ENV CATALINA_HOME=/opt/tomcat
+ENV CATALINA_OPTS="-Dhttp.port=${HTTP_PORT}"
+ENV PATH $CATALINA_HOME/bin:$PATH
 
-RUN apk add --no-cache bash curl tar && \
-    curl https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/$JETTY_VERSION/jetty-distribution-$JETTY_VERSION.tar.gz -o jetty.tar.gz && \
-    tar xvf jetty.tar.gz && \
-    mv jetty-distribution-$JETTY_VERSION /jetty && \
-    rm jetty.tar.gz
+RUN echo "Installing required additional packages" && \
+    apk add --no-cache bash curl tar
 
-COPY target/minicalendar-showcase-*.war /jetty/webapps/ROOT.war
+RUN echo "Prepare environment" && \
+    mkdir --parents $CATALINA_HOME
 
-WORKDIR /jetty
-ENTRYPOINT ["./bin/jetty.sh", "run", "--module=http", "--http-port=$JETTY_PORT"]
-EXPOSE $JETTY_PORT
+RUN echo "Download Tomcat ${TOMCAT_VERSION}" && \
+    curl ${TOMCAT_TGZ_URL} -o tomcat.tar.gz
+
+RUN echo "Extracting Tomcat" && \
+    tar xf tomcat.tar.gz --strip 1 --directory $CATALINA_HOME && \
+    rm tomcat.tar.gz
+
+RUN echo "Set catalina.sh permissions" && \
+    chmod +x ${CATALINA_HOME}/bin/catalina.sh
+
+RUN echo "Remove Tomcat default app" && \
+    rm -rf $CATALINA_HOME/webapps/ROOT
+
+COPY target/minicalendar-showcase-*.war $CATALINA_HOME/webapps/ROOT.war
+
+WORKDIR /
+ENTRYPOINT ["catalina.sh", "run"]
+EXPOSE $HTTP_PORT
