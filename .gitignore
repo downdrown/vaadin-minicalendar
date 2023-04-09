@@ -12,6 +12,7 @@
 */frontend/generated/
 */pnpmfile.js
 */vite.generated.ts
+**/dev-bundle/
 
 # Browser drivers for local integration tests
 drivers/

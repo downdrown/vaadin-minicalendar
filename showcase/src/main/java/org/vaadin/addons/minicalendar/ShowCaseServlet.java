@@ -3,8 +3,8 @@ package org.vaadin.addons.minicalendar;
 import com.vaadin.flow.server.InitParameters;
 import com.vaadin.flow.server.VaadinServlet;
 
-import javax.servlet.annotation.WebInitParam;
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebInitParam;
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(
     urlPatterns = "/*",
