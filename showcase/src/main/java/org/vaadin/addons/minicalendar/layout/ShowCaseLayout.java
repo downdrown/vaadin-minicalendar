@@ -113,10 +113,10 @@ public class ShowCaseLayout extends AppLayout {
         return tabs;
     }
 
-    private static List<Component> navigationItems(Tabs tabs) {
+    private static Tab[] navigationItems(Tabs tabs) {
         return Arrays.stream(View.values())
             .map(view -> navigationTab(tabs, i18n(view.getI18nKey()), view))
-            .collect(Collectors.toList());
+            .toArray(Tab[]::new);
     }
 
     private static Tab navigationTab(Tabs tabs, String viewName, View view) {

@@ -24,9 +24,9 @@
             <artifactId>slf4j-simple</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -43,7 +43,7 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.4.50.v20221201</version>
+                <version>11.0.14</version>
                 <configuration>
                     <scanIntervalSeconds>-1</scanIntervalSeconds>
                     <supportedPackagings>
