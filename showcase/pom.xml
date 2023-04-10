@@ -45,7 +45,6 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>11.0.14</version>
                 <configuration>
-                    <scanIntervalSeconds>-1</scanIntervalSeconds>
                     <supportedPackagings>
                         <supportedPackaging>war</supportedPackaging>
                     </supportedPackagings>
