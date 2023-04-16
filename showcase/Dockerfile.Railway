@@ -1,0 +1,8 @@
+ARG IMAGE_TAG=latest
+FROM ghcr.io/downdrown/vaadin-minicalendar:${IMAGE_TAG}
+
+ARG PORT
+ENV HTTP_PORT=$PORT
+
+ENTRYPOINT ["catalina.sh", "run"]
+EXPOSE $PORT
