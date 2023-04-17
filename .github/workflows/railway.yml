@@ -14,13 +14,29 @@ jobs:
       - name: Log Ref Data
         run: echo "Deploying to Railway.app using image tag ${{ github.ref_name }}"
 
+      - name: Railway - Set IMAGE_TAG Environment Variable
+        run: |
+            curl --location 'https://backboard.railway.app/graphql/v2' \
+            --header 'Content-Type: application/json' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}' \
+            --data '{
+              "query": "mutation { variableUpsert(input: {name: \"IMAGE_TAG\", value: \"${{ github.ref_name }}\", projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\", environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\"}) }"
+            }'
+
+      - name: Railway - Set RAILWAY_DOCKERFILE_PATH Environment Variable
+        run: |
+            curl --location 'https://backboard.railway.app/graphql/v2' \
+            --header 'Content-Type: application/json' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}' \
+            --data '{
+              "query": "mutation { variableUpsert(input: {name: \"RAILWAY_DOCKERFILE_PATH\", value: \"./showcase/Dockerfile.Railway\", projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\", environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\"}) }"
+            }'
+
       - name: Install Railway CLI
         run: curl -fsSL https://railway.app/install.sh | sh
-
-      - name: Deploy to Railway
-        run: |
-            railway variables set IMAGE_TAG ${{ github.ref_name }}
-            railway variables set RAILWAY_DOCKERFILE_PATH  ./showcase/Dockerfile.Railway
-            railway up
+        
+      - name: Railway - Deploy
+        run: railway up
+        
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
