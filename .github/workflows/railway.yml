@@ -12,22 +12,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log Ref Data
-        run: echo "Deploying to Railway.app using image tag ${{ github.ref_name }}"
+        run: echo "Deploying to Railway.app using image tag ${{ github.ref }}"
 
       - name: Railway - Set IMAGE_TAG Environment Variable
         run: |
             curl --location 'https://backboard.railway.app/graphql/v2' \
             --header 'Content-Type: application/json' \
-            --header 'Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
             --data '{
-              "query": "mutation { variableUpsert(input: {name: \"IMAGE_TAG\", value: \"${{ github.ref_name }}\", projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\", environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\"}) }"
+              "query": "mutation { variableUpsert(input: {name: \"IMAGE_TAG\", value: \"${{ github.ref }}\", projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\", environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\"}) }"
             }'
 
       - name: Railway - Set RAILWAY_DOCKERFILE_PATH Environment Variable
         run: |
             curl --location 'https://backboard.railway.app/graphql/v2' \
             --header 'Content-Type: application/json' \
-            --header 'Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}' \
+            --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
             --data '{
               "query": "mutation { variableUpsert(input: {name: \"RAILWAY_DOCKERFILE_PATH\", value: \"./showcase/Dockerfile.Railway\", projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\", environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\"}) }"
             }'
