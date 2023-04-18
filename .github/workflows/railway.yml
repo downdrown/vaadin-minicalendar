@@ -11,6 +11,9 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Log Verbose Data
+        run : echo ${{ toJson(github.event.release) }}
+
       - name: Log Ref Data
         run: echo "Deploying to Railway.app using image tag ${{ github.event.release.tag_name }}"
 
