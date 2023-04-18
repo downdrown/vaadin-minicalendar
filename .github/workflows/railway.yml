@@ -1,5 +1,8 @@
 name: Deploy to Railway
 
+env:
+  JSON_DOC: ${{ toJSON(github) }}
+
 on:
   workflow_dispatch:
   workflow_run:
@@ -12,7 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log Verbose Data
-        run: echo ${{ toJSON(github) }}
+        run: |
+          printf '%s\n' "$JSON_DOC" > foo.json
+          cat foo.json
 
       - name: Log Ref Data
         run: echo "Deploying to Railway.app using image tag ${{ github.event.release.tag_name }}"
