@@ -20,7 +20,7 @@ jobs:
       - name: Railway - Set IMAGE_TAG Environment Variable
         run: |
           curl \
-          --location '${{ RAILWAY_API_URL }}' \
+          --location '${{ vars.RAILWAY_API_URL }}' \
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
@@ -39,7 +39,7 @@ jobs:
       - name: Railway - Configure IMAGE_TAG Environment Variable Share
         run: |
           curl \
-          --location '${{ RAILWAY_API_URL }}' \
+          --location '${{ vars.RAILWAY_API_URL }}' \
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
@@ -60,7 +60,7 @@ jobs:
       - name: Railway - Set RAILWAY_DOCKERFILE_PATH Environment Variable
         run: |
           curl \
-          --location '${{ RAILWAY_API_URL }}' \
+          --location '${{ vars.RAILWAY_API_URL }}' \
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
@@ -79,7 +79,7 @@ jobs:
       - name: Railway - Configure RAILWAY_DOCKERFILE_PATH Environment Variable Share
         run: |
           curl \
-          --location '${{ RAILWAY_API_URL }}' \
+          --location '${{ vars.RAILWAY_API_URL }}' \
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
