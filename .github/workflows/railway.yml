@@ -21,17 +21,17 @@ jobs:
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
-            "query": "mutation {
-              variableUpsert(
-                input: {
-                  name: \"IMAGE_TAG\",
-                  value: \"${{ github.event.workflow_run.head_branch }}\",
-                  projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\",
-                  environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\"
-                }
-              )
+            "query": "mutation {\
+              variableUpsert(\
+                input: {\
+                  name: \\"IMAGE_TAG\\",\
+                  value: \\"${{ github.event.workflow_run.head_branch }}\\",\
+                  projectId: \\"${{ secrets.RAILWAY_PROJECT_ID }}\\",\
+                  environmentId: \\"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\\"\
+                }\
+              )\
             }"
-          }'\
+          }'
 
       - name: Railway - Configure IMAGE_TAG Environment Variable Share
         run: |
@@ -40,19 +40,20 @@ jobs:
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
-            "query":"mutation {
-              sharedVariableConfigure(
-                input: {
-                  name: \"IMAGE_TAG\",
-                  projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\",
-                  environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\",
-                  enabledServiceIds: [\"${{ secrets.RAILWAY_SERVICE_ID }}\"],
-                  disabledServiceIds: [\"\"]
-                }
-              ) {
-                name
+            "query": "mutation {\
+              sharedVariableConfigure(\
+                input: {\
+                  name: \\"IMAGE_TAG\\",\
+                  projectId: \\"${{ secrets.RAILWAY_PROJECT_ID }}\\",\
+                  environmentId: \\"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\\",\
+                  enabledServiceIds: [\\"${{ secrets.RAILWAY_SERVICE_ID }}\\"],\
+                  disabledServiceIds: [\\"\\"]\
+                }\
+              ) {\
+                name\
+              }\
             }"
-          }'\
+          }'
 
       - name: Railway - Set RAILWAY_DOCKERFILE_PATH Environment Variable
         run: |
@@ -61,17 +62,17 @@ jobs:
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
-            "query": "mutation {
-              variableUpsert(
-                input: {
-                  name: \"RAILWAY_DOCKERFILE_PATH\",
-                  value: \"showcase/Dockerfile.Railway\",
-                  projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\",
-                  environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\"
-                }
-              )
+            "query": "mutation {\
+              variableUpsert(\
+                input: {\
+                  name: \\"RAILWAY_DOCKERFILE_PATH\\",\
+                  value: \\"showcase/Dockerfile.Railway\\",\
+                  projectId: \\"${{ secrets.RAILWAY_PROJECT_ID }}\\",\
+                  environmentId: \\"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\\"\
+                }\
+              )\
             }"
-          }'\
+          }
 
       - name: Railway - Configure RAILWAY_DOCKERFILE_PATH Environment Variable Share
         run: |
@@ -80,19 +81,20 @@ jobs:
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
-            "query":"mutation {
-              sharedVariableConfigure(
-                input: {
-                  name: \"RAILWAY_DOCKERFILE_PATH\",
-                  projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\",
-                  environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\",
-                  enabledServiceIds: [\"${{ secrets.RAILWAY_SERVICE_ID }}\"],
-                  disabledServiceIds: [\"\"]
-                }
-              ) {
-                name
+            "query": "mutation {\
+              sharedVariableConfigure(\
+                input: {\
+                  name: \\"RAILWAY_DOCKERFILE_PATH\\",\
+                  projectId: \\"${{ secrets.RAILWAY_PROJECT_ID }}\\",\
+                  environmentId: \\"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\\",\
+                  enabledServiceIds: [\\"${{ secrets.RAILWAY_SERVICE_ID }}\\"],\
+                  disabledServiceIds: [\\\"\\"\\]\
+                }\
+              ) {\
+                name\
+              }\
             }"
-          }'\
+          }'
 
       - name: Install Railway CLI
         run: curl -fsSL https://railway.app/install.sh | sh
