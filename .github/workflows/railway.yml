@@ -31,7 +31,7 @@ jobs:
                 }
               )
             }"
-          }'
+          }'\
 
       - name: Railway - Configure IMAGE_TAG Environment Variable Share
         run: |
@@ -52,7 +52,7 @@ jobs:
               ) {
                 name
             }"
-          }'
+          }'\
 
       - name: Railway - Set RAILWAY_DOCKERFILE_PATH Environment Variable
         run: |
@@ -71,7 +71,7 @@ jobs:
                 }
               )
             }"
-          }'
+          }'\
 
       - name: Railway - Configure RAILWAY_DOCKERFILE_PATH Environment Variable Share
         run: |
@@ -92,7 +92,7 @@ jobs:
               ) {
                 name
             }"
-          }'
+          }'\
 
       - name: Install Railway CLI
         run: curl -fsSL https://railway.app/install.sh | sh
