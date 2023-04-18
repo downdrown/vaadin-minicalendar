@@ -11,13 +11,16 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Log Verbose Data
+        run : echo ${{ toJson(github.event.release) }}
+
       - name: Log Ref Data
         run: echo "Deploying to Railway.app using image tag ${{ github.event.release.tag_name }}"
 
       - name: Railway - Set IMAGE_TAG Environment Variable
         run: |
           curl \
-          --location '${{ env.RAILWAY_API_URL }}' \
+          --location '${{ RAILWAY_API_URL }}' \
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
@@ -36,7 +39,7 @@ jobs:
       - name: Railway - Configure IMAGE_TAG Environment Variable Share
         run: |
           curl \
-          --location '${{ env.RAILWAY_API_URL }}' \
+          --location '${{ RAILWAY_API_URL }}' \
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
@@ -57,7 +60,7 @@ jobs:
       - name: Railway - Set RAILWAY_DOCKERFILE_PATH Environment Variable
         run: |
           curl \
-          --location '${{ env.RAILWAY_API_URL }}' \
+          --location '${{ RAILWAY_API_URL }}' \
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
@@ -76,7 +79,7 @@ jobs:
       - name: Railway - Configure RAILWAY_DOCKERFILE_PATH Environment Variable Share
         run: |
           curl \
-          --location '${{ env.RAILWAY_API_URL }}' \
+          --location '${{ RAILWAY_API_URL }}' \
           --header 'Content-Type: application/json' \
           --header 'Authorization: Bearer ${{ secrets.RAILWAY_API_TOKEN }}' \
           --data '{
