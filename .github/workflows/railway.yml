@@ -1,8 +1,5 @@
 name: Deploy to Railway
 
-env:
-  JSON_DOC: ${{ toJSON(github) }}
-
 on:
   workflow_dispatch:
   workflow_run:
@@ -14,13 +11,8 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Log Verbose Data
-        run: |
-          printf '%s\n' "$JSON_DOC" > foo.json
-          cat foo.json
-
       - name: Log Ref Data
-        run: echo "Deploying to Railway.app using image tag ${{ github.event.release.tag_name }}"
+        run: echo "Deploying to Railway.app using image tag ${{ github.event.workflow_run.head_branch }}"
 
       - name: Railway - Set IMAGE_TAG Environment Variable
         run: |
@@ -33,7 +25,7 @@ jobs:
               variableUpsert( \
                 input: { \
                   name: \"IMAGE_TAG\", \
-                  value: \"${{ github.event.release.tag_name }}\", \
+                  value: \"${{ github.event.workflow_run.head_branch }}\", \
                   projectId: \"${{ secrets.RAILWAY_PROJECT_ID }}\", \
                   environmentId: \"${{ secrets.RAILWAY_ENVIRONMENT_ID }}\" \
                 } \
