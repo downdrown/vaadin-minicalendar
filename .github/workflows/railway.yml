@@ -12,9 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log Verbose Data
-        run : |
-          echo ${{ toJson(github.event) }} \
-          echo ${{ toJson(github) }}
+        run: echo ${{ toJson(github) }}
 
       - name: Log Ref Data
         run: echo "Deploying to Railway.app using image tag ${{ github.event.release.tag_name }}"
