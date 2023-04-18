@@ -22,4 +22,5 @@ max_line_length = 120
 
 # Indentation for YAMLs)
 [{*.yml, *.yaml}]
-indent_style = tab
+indent_style = space
+indent_size = 2
