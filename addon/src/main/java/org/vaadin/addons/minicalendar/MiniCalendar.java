@@ -405,6 +405,13 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
                 return;
             }
 
+            if (selectedComponent == event.getSource()) {
+                selectedComponent.removeClassName(CSS_SELECTED);
+                selectedComponent = null;
+                setModelValue(null, true);
+                return;
+            }
+
             if (selectedComponent != null) {
                 selectedComponent.removeClassName(CSS_SELECTED);
             }
