@@ -1,7 +1,7 @@
 package org.vaadin.addons.minicalendar.util;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.function.SerializableSupplier;
 
 import java.util.Map;
@@ -12,8 +12,8 @@ public final class ComponentUtils {
         // no-op
     }
 
-    public static Label labelWithStyles(String text, Map<String, String> styles) {
-        var label = new Label(text);
+    public static Div labelWithStyles(String text, Map<String, String> styles) {
+        var label = new Div(text);
         styles.forEach(label.getStyle()::set);
         return label;
     }
