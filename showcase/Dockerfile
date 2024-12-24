@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-focal
 
 ENV HTTP_PORT=8080
 ENV TOMCAT_MAJOR=10
@@ -7,9 +7,6 @@ ENV TOMCAT_TGZ_URL=https://dlcdn.apache.org/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT
 ENV CATALINA_HOME=/opt/tomcat
 ENV CATALINA_OPTS="-Dhttp.port=${HTTP_PORT}"
 ENV PATH $CATALINA_HOME/bin:$PATH
-
-RUN echo "Installing required additional packages" && \
-    apk add --no-cache bash curl tar
 
 RUN echo "Prepare environment" && \
     mkdir --parents $CATALINA_HOME
