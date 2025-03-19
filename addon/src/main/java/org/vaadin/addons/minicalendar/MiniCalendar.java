@@ -1,6 +1,8 @@
 package org.vaadin.addons.minicalendar;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Unit;
@@ -63,12 +65,9 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private TextStyle dayTextStyle = TextStyle.SHORT_STANDALONE;
     private TextStyle monthTextStyle = TextStyle.FULL;
     private Span selectedComponent = null;
-    private Button previousMonthButton = null;
-    private Button nextMonthButton = null;
-    private Span monthTitle = null;
-    private Span yearTitle = null;
 
     /* External Handlers */
+
     private SerializablePredicate<LocalDate> dayEnabledProvider = null;
     private SerializableFunction<LocalDate, List<String>> dayStyleProvider = null;
 
@@ -116,16 +115,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     @Override
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
-        for (Map.Entry<LocalDate, Component> entry : dayToComponentMapping.entrySet()) {
-            final var dayComponent = entry.getValue();
-            if (dayComponent instanceof HasStyle) {
-                final var styledComponent = (HasStyle) dayComponent;
-                toggleStyle(styledComponent, CSS_READONLY);
-            }
-        }
-        toggleStyle(yearTitle, CSS_READONLY);
-        previousMonthButton.setVisible(!readOnly);
-        nextMonthButton.setVisible(!readOnly);
+        fireEvent(new ReadOnlyStateChangeEvent(this, false));
     }
 
     @Override
@@ -220,28 +210,47 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         renderDayRows();
     }
 
-    private void renderTitle() {
+    private Button makeButton(Component icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
+        final var button = new Button(icon, clickListener);
+        button.addThemeVariants(ButtonVariant.LUMO_SMALL);
+        button.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        return button;
+    }
 
-        previousMonthButton = new Button(LumoIcon.ANGLE_LEFT.create(), e -> navigateToPreviousMonth());
-        previousMonthButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
-        previousMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        previousMonthButton.setVisible(!isReadOnly());
+    private Button makePreviousMonthButton() {
+        final var button = makeButton(LumoIcon.ANGLE_LEFT.create(), event -> navigateToPreviousMonth());
+        button.setVisible(!isReadOnly());
+        return button;
+    }
 
-        nextMonthButton = new Button(LumoIcon.ANGLE_RIGHT.create(), e -> navigateToNextMonth());
-        nextMonthButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
-        nextMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        nextMonthButton.setVisible(!isReadOnly());
+    private Button makeNextMonthButton() {
+        final var button = makeButton(LumoIcon.ANGLE_RIGHT.create(), event -> navigateToNextMonth());
+        button.setVisible(!isReadOnly());
+        return button;
+    }
 
-        monthTitle = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()));
+    private Span makeMonthTitle() {
+        final var monthTitle = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()));
         monthTitle.addClassName("title");
-
-        yearTitle = new Span(String.valueOf(yearMonthHolder.getValue().getYear()));
-        yearTitle.addClassName("title");
-
         if (isReadOnly()) {
             monthTitle.addClassName(CSS_READONLY);
+        }
+        return monthTitle;
+    }
+
+    private Span makeYearTitle() {
+        final var yearTitle = new Span(String.valueOf(yearMonthHolder.getValue().getYear()));
+        yearTitle.addClassName("title");
+        if (isReadOnly()) {
             yearTitle.addClassName(CSS_READONLY);
         }
+        return yearTitle;
+    }
+
+    private Component makeMonthYearTitleLayout() {
+
+        final var monthTitle = makeMonthTitle();
+        final var yearTitle = makeYearTitle();
 
         var monthYearTitleLayout = new HorizontalLayout(monthTitle, yearTitle);
         monthYearTitleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
@@ -252,20 +261,19 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         monthYearTitleLayout.setPadding(false);
         monthYearTitleLayout.setSpacing(true);
 
-        var titleLayout = new HorizontalLayout(previousMonthButton, monthYearTitleLayout, nextMonthButton);
-        titleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        titleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        titleLayout.setWidthFull();
-        titleLayout.setSpacing(true);
-        titleLayout.setHeight(30, Unit.PIXELS);
-        titleLayout.expand(monthYearTitleLayout);
-
         monthTitle.addClickListener(event -> {
             if (isInteractionDisabled()) {
                 return;
             }
             var monthSelection = monthSelect();
             monthYearTitleLayout.replace(monthTitle, monthSelection);
+        });
+
+        addListener(ReadOnlyStateChangeEvent.class, event -> {
+            final var isEnabled = !event.isReadOnly();
+            monthTitle.setEnabled(isEnabled);
+            yearTitle.setEnabled(isEnabled);
+            toggleStyle(yearTitle, CSS_READONLY);
         });
 
         yearTitle.addClickListener(event -> {
@@ -276,7 +284,34 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             monthYearTitleLayout.replace(yearTitle, yearSelection);
         });
 
-        content.add(titleLayout);
+        return monthYearTitleLayout;
+    }
+
+    private Component makeTitleLayout() {
+
+        final var previousMonthButton = makePreviousMonthButton();
+        final var nextMonthButton = makeNextMonthButton();
+        final var  monthYearTitleLayout = makeMonthYearTitleLayout();
+
+        var titleLayout = new HorizontalLayout(previousMonthButton, monthYearTitleLayout, nextMonthButton);
+        titleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        titleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        titleLayout.setWidthFull();
+        titleLayout.setSpacing(true);
+        titleLayout.setHeight(30, Unit.PIXELS);
+        titleLayout.expand(monthYearTitleLayout);
+
+        addListener(ReadOnlyStateChangeEvent.class, event -> {
+            final var isVisible = !event.isReadOnly();
+            previousMonthButton.setVisible(isVisible);
+            nextMonthButton.setVisible(isVisible);
+        });
+
+        return titleLayout;
+    }
+
+    private void renderTitle() {
+        content.add(makeTitleLayout());
     }
 
     private void renderHeaderRow() {
@@ -315,7 +350,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             }
 
             var day = yearMonthHolder.getValue().atDay(dayOfMonth);
-            var dayComponent = createDayComponent(day);
+            var dayComponent = makeDayComponent(day);
             dayToComponentMapping.put(day, dayComponent);
             dayComponents.add(dayComponent);
         }
@@ -397,7 +432,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         return Collections.unmodifiableList(eligibleYears);
     }
 
-    private Component createDayComponent(LocalDate forDay) {
+    private Component makeDayComponent(LocalDate forDay) {
         var component = span(String.valueOf(forDay.getDayOfMonth()));
         component.addClickListener(event -> {
 
@@ -467,6 +502,8 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
                 });
             }
         }
+
+        addListener(ReadOnlyStateChangeEvent.class, event -> toggleStyle(component, CSS_READONLY));
 
         return component;
     }
