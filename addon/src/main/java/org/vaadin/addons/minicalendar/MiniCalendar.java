@@ -38,7 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -210,6 +209,59 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         renderDayRows();
     }
 
+    private void renderTitle() {
+        content.add(makeTitleLayout());
+    }
+
+    private void renderHeaderRow() {
+
+        var weekDays = new ArrayList<Span>(7);
+        var _firstDayOfWeek = firstDayOfWeek;
+
+        do {
+            Span weekDay = span(_firstDayOfWeek.getDisplayName(dayTextStyle, getLocale()));
+            weekDay.addClassName(CSS_WEEKDAY);
+            weekDays.add(weekDay);
+            _firstDayOfWeek = _firstDayOfWeek.plus(1);
+        } while (_firstDayOfWeek != firstDayOfWeek);
+
+        addRow(weekDays);
+    }
+
+    private void renderDayRows() {
+
+        var dayComponents = new ArrayList<Component>(7);
+        var dayOfWeekOfFirstDayInMonth = yearMonthHolder.getValue().atDay(1).getDayOfWeek();
+        var dayIterator = firstDayOfWeek;
+
+        // Fill empty days before first day of month
+        while (dayIterator != dayOfWeekOfFirstDayInMonth) {
+            dayComponents.add(emptySpan());
+            dayIterator = dayIterator.plus(1);
+        }
+
+        // Add actual days to the calendar view
+        for (int dayOfMonth = 1; dayOfMonth <= getLastDayOfMonth(yearMonthHolder.getValue()); dayOfMonth++) {
+
+            if (dayComponents.size() == 7) {
+                addRow(dayComponents);
+                dayComponents.clear();
+            }
+
+            var day = yearMonthHolder.getValue().atDay(dayOfMonth);
+            var dayComponent = makeDayComponent(day);
+            dayToComponentMapping.put(day, dayComponent);
+            dayComponents.add(dayComponent);
+        }
+
+        // Fill empty days after last day of month
+        while (dayComponents.size() < 7) {
+            dayComponents.add(emptySpan());
+        }
+
+        addRow(dayComponents);
+    }
+
     private Button makeButton(Component icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
         final var button = new Button(icon, clickListener);
         button.addThemeVariants(ButtonVariant.LUMO_SMALL);
@@ -265,7 +317,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             if (isInteractionDisabled()) {
                 return;
             }
-            var monthSelection = monthSelect();
+            var monthSelection = makeMonthSelectionComponent();
             monthYearTitleLayout.replace(monthTitle, monthSelection);
         });
 
@@ -280,7 +332,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             if (isInteractionDisabled()) {
                 return;
             }
-            var yearSelection = yearSelection();
+            var yearSelection = makeYearSelectionComponent();
             monthYearTitleLayout.replace(yearTitle, yearSelection);
         });
 
@@ -310,60 +362,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         return titleLayout;
     }
 
-    private void renderTitle() {
-        content.add(makeTitleLayout());
-    }
-
-    private void renderHeaderRow() {
-
-        var weekDays = new ArrayList<Span>(7);
-        var _firstDayOfWeek = firstDayOfWeek;
-
-        do {
-            Span weekDay = span(_firstDayOfWeek.getDisplayName(dayTextStyle, getLocale()));
-            weekDay.addClassName(CSS_WEEKDAY);
-            weekDays.add(weekDay);
-            _firstDayOfWeek = _firstDayOfWeek.plus(1);
-        } while (_firstDayOfWeek != firstDayOfWeek);
-
-        addRow(weekDays);
-    }
-
-    private void renderDayRows() {
-
-        var dayComponents = new ArrayList<Component>(7);
-        var dayOfWeekOfFirstDayInMonth = yearMonthHolder.getValue().atDay(1).getDayOfWeek();
-        var dayIterator = firstDayOfWeek;
-
-        // Fill empty days before first day of month
-        while (dayIterator != dayOfWeekOfFirstDayInMonth) {
-            dayComponents.add(emptySpan());
-            dayIterator = dayIterator.plus(1);
-        }
-
-        // Add actual days to the calendar view
-        for (int dayOfMonth = 1; dayOfMonth <= getLastDayOfMonth(yearMonthHolder.getValue()); dayOfMonth++) {
-
-            if (dayComponents.size() == 7) {
-                addRow(dayComponents);
-                dayComponents.clear();
-            }
-
-            var day = yearMonthHolder.getValue().atDay(dayOfMonth);
-            var dayComponent = makeDayComponent(day);
-            dayToComponentMapping.put(day, dayComponent);
-            dayComponents.add(dayComponent);
-        }
-
-        // Fill empty days after last day of month
-        while (dayComponents.size() < 7) {
-            dayComponents.add(emptySpan());
-        }
-
-        addRow(dayComponents);
-    }
-
-    private Component monthSelect() {
+    private Component makeMonthSelectionComponent() {
 
         var monthSelect = new ComboBox<Month>();
         monthSelect.setItemLabelGenerator(month -> month.getDisplayName(monthTextStyle, getLocale()));
@@ -383,7 +382,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         return monthSelect;
     }
 
-    private Component yearSelection() {
+    private Component makeYearSelectionComponent() {
 
         var yearSelect = new ComboBox<Year>();
         yearSelect.setMaxWidth(4, Unit.REM);
