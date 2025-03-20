@@ -25,8 +25,11 @@ import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -50,6 +53,9 @@ import java.util.Set;
 @CssImport("./minicalendar.css")
 public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVariant<MiniCalendarVariant>, LocaleChangeObserver {
 
+    private static final Logger log = LoggerFactory.getLogger(MiniCalendar.class);
+
+    private static final Duration LONG_INVOCATION_THRESHOLD = Duration.ofMillis(30);
     private static final String CSS_BASE = "minicalendar";
     private static final String CSS_WEEKDAY = "weekday";
     private static final String CSS_DAY = "day";
@@ -483,28 +489,61 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             component.addClassName(CSS_READONLY);
         }
 
-        if (dayEnabledProvider != null) {
-            var dayEnabled = dayEnabledProvider.test(forDay);
-            component.setEnabled(dayEnabled);
-            if (!dayEnabled) {
-                component.addClassName(CSS_DISABLED);
-            }
+        final var dayIsEnabled = checkIfDayIsEnabled(forDay);
+        component.setEnabled(dayIsEnabled);
+        if (!dayIsEnabled) {
+            component.addClassName(CSS_DISABLED);
         }
 
-        if (dayStyleProvider != null) {
-            var additionalClassNames = dayStyleProvider.apply(forDay);
-            if (additionalClassNames != null) {
-                additionalClassNames.forEach(additionalClassName -> {
-                    if (StringUtils.isNotBlank(additionalClassName)) {
-                        component.addClassName(additionalClassName);
-                    }
-                });
-            }
+        final var additionalStyles = checkIfAdditionalStylesAreApplied(forDay);
+        if (additionalStyles != null && !additionalStyles.isEmpty()) {
+            additionalStyles.forEach(additionalClassName -> {
+                if (StringUtils.isNotBlank(additionalClassName)) {
+                    component.addClassName(additionalClassName);
+                }
+            });
         }
 
         addListener(ReadOnlyStateChangeEvent.class, event -> toggleStyle(component, CSS_READONLY));
 
         return component;
+    }
+
+    private boolean checkIfDayIsEnabled(LocalDate forDay) {
+        if (dayEnabledProvider == null) {
+            return true;
+        }
+        var result = true;
+
+        final var invocationStart = System.currentTimeMillis();
+        result = dayEnabledProvider.test(forDay);
+        final var invocationEnd = System.currentTimeMillis();
+
+        final var invocationDuration = Duration.ofMillis(invocationEnd - invocationStart);
+        if (invocationDuration.compareTo(LONG_INVOCATION_THRESHOLD) > 0) {
+            log.warn("Slow dayEnabledProvider call detected! Invocation took {}ms, threshold is {}", invocationDuration, LONG_INVOCATION_THRESHOLD);
+        }
+
+        return result;
+    }
+
+    private List<String> checkIfAdditionalStylesAreApplied(LocalDate forDay) {
+        if (dayStyleProvider == null) {
+            return Collections.emptyList();
+        }
+
+        List<String> result;
+
+        final var invocationStart = System.currentTimeMillis();
+        result = dayStyleProvider.apply(forDay);
+        final var invocationEnd = System.currentTimeMillis();
+
+        final var invocationDuration = Duration.ofMillis(invocationEnd - invocationStart);
+        if (invocationDuration.compareTo(LONG_INVOCATION_THRESHOLD) > 0) {
+            log.warn("Slow dayStyleProvider call detected! Invocation took {}ms, threshold is {}", invocationDuration, LONG_INVOCATION_THRESHOLD);
+        }
+
+        return result;
     }
 
     private void addRow(List<? extends Component> columns) {
