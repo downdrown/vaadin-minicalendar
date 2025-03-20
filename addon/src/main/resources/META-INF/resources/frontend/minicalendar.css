@@ -17,7 +17,7 @@
     text-align: center;
 }
 
-.minicalendar:not([disabled]) .title:not(.readonly) {
+.minicalendar:not([disabled]) .day:not(.readonly):not(.disabled) {
     cursor: pointer;
 }
 
