@@ -55,13 +55,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private static final Logger log = LoggerFactory.getLogger(MiniCalendar.class);
 
     private static final Duration LONG_INVOCATION_THRESHOLD = Duration.ofMillis(30);
-    private static final String CSS_BASE = "minicalendar";
-    private static final String CSS_WEEKDAY = "weekday";
-    private static final String CSS_DAY = "day";
-    private static final String CSS_SELECTED = "selected";
-    private static final String CSS_READONLY = "readonly";
-    private static final String CSS_DISABLED = "disabled";
-    private final VerticalLayout content = new VerticalLayout();
+     private final VerticalLayout content = new VerticalLayout();
     private final List<MiniCalendarVariant> appliedVariants = new ArrayList<>(MiniCalendarVariant.values().length);
     private final YearMonthHolder yearMonthHolder = new YearMonthHolder();
     private DayOfWeek firstDayOfWeek = getFirstDayOfWeekByLocale(getLocale());
@@ -90,7 +84,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         this.yearMonthHolder.setValue(yearMonth);
         yearMonthHolder.addValueChangeListener(e -> redraw());
 
-        content.addClassName(CSS_BASE);
+        content.addClassName(Styles.BASE);
         content.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
         content.setSpacing(false);
         content.setPadding(false);
@@ -224,7 +218,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
         do {
             Span weekDay = span(_firstDayOfWeek.getDisplayName(dayTextStyle, getLocale()));
-            weekDay.addClassName(CSS_WEEKDAY);
+            weekDay.addClassName(Styles.WEEKDAY);
             weekDays.add(weekDay);
             _firstDayOfWeek = _firstDayOfWeek.plus(1);
         } while (_firstDayOfWeek != firstDayOfWeek);
@@ -291,7 +285,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         final var monthTitle = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()));
         monthTitle.addClassName("title");
         if (isReadOnly()) {
-            monthTitle.addClassName(CSS_READONLY);
+            monthTitle.addClassName(Styles.READONLY);
         }
         return monthTitle;
     }
@@ -300,7 +294,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         final var yearTitle = new Span(String.valueOf(yearMonthHolder.getValue().getYear()));
         yearTitle.addClassName("title");
         if (isReadOnly()) {
-            yearTitle.addClassName(CSS_READONLY);
+            yearTitle.addClassName(Styles.READONLY);
         }
         return yearTitle;
     }
@@ -331,7 +325,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             final var isEnabled = !event.isReadOnly();
             monthTitle.setEnabled(isEnabled);
             yearTitle.setEnabled(isEnabled);
-            toggleStyle(yearTitle, CSS_READONLY);
+            toggleStyle(yearTitle, Styles.READONLY);
         });
 
         yearTitle.addClickListener(event -> {
@@ -422,24 +416,24 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             }
 
             if (selectedComponent == event.getSource()) {
-                selectedComponent.removeClassName(CSS_SELECTED);
+                selectedComponent.removeClassName(Styles.SELECTED);
                 selectedComponent = null;
                 setModelValue(null, true);
                 return;
             }
 
             if (selectedComponent != null) {
-                selectedComponent.removeClassName(CSS_SELECTED);
+                selectedComponent.removeClassName(Styles.SELECTED);
             }
 
             selectedComponent = event.getSource();
-            selectedComponent.addClassName(CSS_SELECTED);
+            selectedComponent.addClassName(Styles.SELECTED);
 
             setModelValue(forDay, true);
         });
 
         if (Objects.equals(getValue(), forDay)) {
-            component.addClassName(CSS_SELECTED);
+            component.addClassName(Styles.SELECTED);
             selectedComponent = component;
         }
 
@@ -447,7 +441,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             component.addClassName(MiniCalendarVariant.HIGHLIGHT_WEEKEND.getVariantName());
         }
 
-        component.addClassName(CSS_DAY);
+        component.addClassName(Styles.DAY);
 
         if (hasVariant(MiniCalendarVariant.ROUNDED)) {
             component.addClassName(MiniCalendarVariant.ROUNDED.getVariantName());
@@ -462,13 +456,13 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         }
 
         if (isReadOnly()) {
-            component.addClassName(CSS_READONLY);
+            component.addClassName(Styles.READONLY);
         }
 
         final var dayIsEnabled = checkIfDayIsEnabled(forDay);
         component.setEnabled(dayIsEnabled);
         if (!dayIsEnabled) {
-            component.addClassName(CSS_DISABLED);
+            component.addClassName(Styles.DISABLED);
         }
 
         final var additionalStyles = checkIfAdditionalStylesAreApplied(forDay);
@@ -480,7 +474,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             });
         }
 
-        addListener(ReadOnlyStateChangeEvent.class, event -> toggleStyle(component, CSS_READONLY));
+        addListener(ReadOnlyStateChangeEvent.class, event -> toggleStyle(component, Styles.READONLY));
 
         return component;
     }
