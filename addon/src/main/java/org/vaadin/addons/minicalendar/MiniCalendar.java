@@ -194,6 +194,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         };
     }
 
+
     /* Internal API */
 
     private void redraw() {
@@ -263,6 +264,9 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
         addRow(dayComponents);
     }
+
+
+    /* Component factory API */
 
     private Button makeButton(Component icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
         final var button = new Button(icon, clickListener);
@@ -409,30 +413,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         return yearSelect;
     }
 
-    private void navigateToPreviousMonth() {
-        yearMonthHolder.setValueFromClient(yearMonthHolder.getValue().minusMonths(1));
-    }
-
-    private void navigateToNextMonth() {
-        yearMonthHolder.setValueFromClient(yearMonthHolder.getValue().plusMonths(1));
-    }
-
-
-    /* Utilities */
-
-    private List<Year> evaluateEligibleYears() {
-
-        var minYear = yearMonthHolder.getValue().getYear() - 10;
-        var maxYear = yearMonthHolder.getValue().getYear() + 10;
-        var eligibleYears = new ArrayList<Year>(201);
-
-        for (int year = minYear; year < maxYear; year++) {
-            eligibleYears.add(Year.of(year));
-        }
-
-        return Collections.unmodifiableList(eligibleYears);
-    }
-
     private Component makeDayComponent(LocalDate forDay) {
         var component = span(String.valueOf(forDay.getDayOfMonth()));
         component.addClickListener(event -> {
@@ -503,6 +483,30 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         addListener(ReadOnlyStateChangeEvent.class, event -> toggleStyle(component, CSS_READONLY));
 
         return component;
+    }
+
+    private void navigateToPreviousMonth() {
+        yearMonthHolder.setValueFromClient(yearMonthHolder.getValue().minusMonths(1));
+    }
+
+    private void navigateToNextMonth() {
+        yearMonthHolder.setValueFromClient(yearMonthHolder.getValue().plusMonths(1));
+    }
+
+
+    /* Utilities */
+
+    private List<Year> evaluateEligibleYears() {
+
+        var minYear = yearMonthHolder.getValue().getYear() - 10;
+        var maxYear = yearMonthHolder.getValue().getYear() + 10;
+        var eligibleYears = new ArrayList<Year>(201);
+
+        for (int year = minYear; year < maxYear; year++) {
+            eligibleYears.add(Year.of(year));
+        }
+
+        return Collections.unmodifiableList(eligibleYears);
     }
 
     private boolean checkIfDayIsEnabled(LocalDate forDay) {
