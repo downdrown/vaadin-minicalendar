@@ -16,6 +16,11 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Component that represents a single day slot in the {@link  MiniCalendar}.
+ *
+ * @author Manfred Huber
+ */
 @Tag(Tag.SPAN)
 class DayComponent extends Component implements HasEnabled, ClickNotifier<DayComponent> {
 
