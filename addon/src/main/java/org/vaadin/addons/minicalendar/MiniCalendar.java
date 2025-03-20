@@ -63,7 +63,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private static final String CSS_READONLY = "readonly";
     private static final String CSS_DISABLED = "disabled";
     private final VerticalLayout content = new VerticalLayout();
-    private final HashMap<LocalDate, Component> dayToComponentMapping = new HashMap<>(31);
     private final List<MiniCalendarVariant> appliedVariants = new ArrayList<>(MiniCalendarVariant.values().length);
     private final YearMonthHolder yearMonthHolder = new YearMonthHolder();
     private DayOfWeek firstDayOfWeek = getFirstDayOfWeekByLocale(getLocale());
@@ -205,7 +204,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private void resetComponent() {
         content.removeAll();
-        dayToComponentMapping.clear();
         selectedComponent = null;
     }
 
@@ -256,7 +254,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
             var day = yearMonthHolder.getValue().atDay(dayOfMonth);
             var dayComponent = makeDayComponent(day);
-            dayToComponentMapping.put(day, dayComponent);
             dayComponents.add(dayComponent);
         }
 
