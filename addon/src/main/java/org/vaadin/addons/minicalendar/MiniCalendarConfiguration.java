@@ -17,6 +17,7 @@ final class MiniCalendarConfiguration {
     private DayOfWeek firstDayOfWeek = getFirstDayOfWeekByLocale(getLocale());
     private TextStyle dayTextStyle = TextStyle.SHORT_STANDALONE;
     private TextStyle monthTextStyle = TextStyle.FULL;
+    private boolean allowDeselection = true;
 
     public DayOfWeek getFirstDayOfWeek() {
         return firstDayOfWeek;
@@ -40,6 +41,14 @@ final class MiniCalendarConfiguration {
 
     public void setMonthTextStyle(TextStyle monthTextStyle) {
         this.monthTextStyle = monthTextStyle;
+    }
+
+    public boolean isAllowDeselection() {
+        return allowDeselection;
+    }
+
+    public void setAllowDeselection(boolean allowDeselection) {
+        this.allowDeselection = allowDeselection;
     }
 
     private static DayOfWeek getFirstDayOfWeekByLocale(Locale locale) {

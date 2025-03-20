@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HasDynamicTitle;
@@ -28,9 +29,11 @@ public class OtherExamplesView extends Div implements HasDynamicTitle {
 
     private void renderView() {
 
-        var viewLayout = new VerticalLayout(
-            calendarWithDayTextStyle()
+        var viewLayout = new HorizontalLayout(
+            calendarWithDayTextStyle(),
+            calendarWithDeselectionDisallowed()
         );
+
         viewLayout.setWidth(null);
         viewLayout.setPadding(true);
 
@@ -53,6 +56,17 @@ public class OtherExamplesView extends Div implements HasDynamicTitle {
                 var miniCalendar = new MiniCalendar();
                 miniCalendar.setDayTextStyle(TextStyle.SHORT_STANDALONE);
                 miniCalendar.addClassName("rotated-header");
+                return miniCalendar;
+            })
+        );
+    }
+
+    private static Component calendarWithDeselectionDisallowed() {
+        return new VerticalLayout(
+            header(i18n("otherexamples.deselectiondisallowed.header")),
+            fromDefinition(() -> {
+                var miniCalendar = new MiniCalendar();
+                miniCalendar.setAllowDeselection(false);
                 return miniCalendar;
             })
         );

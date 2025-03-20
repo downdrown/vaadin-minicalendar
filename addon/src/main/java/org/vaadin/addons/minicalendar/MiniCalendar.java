@@ -31,11 +31,9 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
-import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -158,6 +156,11 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     public void setMonthTextStyle(TextStyle monthTextStyle) {
         configuration.setMonthTextStyle(monthTextStyle);
+        redraw();
+    }
+
+    public void setAllowDeselection(boolean allowDeselection) {
+        configuration.setAllowDeselection(allowDeselection);
         redraw();
     }
 
@@ -421,7 +424,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
                 return;
             }
 
-            if (selectedComponent == event.getSource()) {
+            if (configuration.isAllowDeselection() && selectedComponent == event.getSource()) {
                 selectedComponent.deselect();
                 selectedComponent = null;
                 setModelValue(null, true);
