@@ -51,9 +51,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private final VerticalLayout content = new VerticalLayout();
     private final List<MiniCalendarVariant> appliedVariants = new ArrayList<>(MiniCalendarVariant.values().length);
     private final YearMonthHolder yearMonthHolder = new YearMonthHolder();
-    private DayOfWeek firstDayOfWeek = getFirstDayOfWeekByLocale(getLocale());
-    private TextStyle dayTextStyle = TextStyle.SHORT_STANDALONE;
-    private TextStyle monthTextStyle = TextStyle.FULL;
+    private final MiniCalendarConfiguration configuration = new MiniCalendarConfiguration();
     private DayComponent selectedComponent = null;
 
     /* External Handlers */
@@ -141,7 +139,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     /* Public API */
 
     public void setFirstDayOfWeek(DayOfWeek firstDayOfWeek) {
-        this.firstDayOfWeek = firstDayOfWeek;
+        configuration.setFirstDayOfWeek(firstDayOfWeek);
         redraw();
     }
 
@@ -154,12 +152,12 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     }
 
     public void setDayTextStyle(TextStyle dayTextStyle) {
-        this.dayTextStyle = dayTextStyle;
+        configuration.setDayTextStyle(dayTextStyle);
         redraw();
     }
 
     public void setMonthTextStyle(TextStyle monthTextStyle) {
-        this.monthTextStyle = monthTextStyle;
+        configuration.setMonthTextStyle(monthTextStyle);
         redraw();
     }
 
@@ -207,14 +205,14 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private void renderHeaderRow() {
 
         var weekDays = new ArrayList<Span>(7);
-        var _firstDayOfWeek = firstDayOfWeek;
+        var day = configuration.getFirstDayOfWeek();
 
         do {
-            Span weekDay = span(_firstDayOfWeek.getDisplayName(dayTextStyle, getLocale()));
+            Span weekDay = span(day.getDisplayName(configuration.getDayTextStyle(), getLocale()));
             weekDay.addClassName(Styles.WEEKDAY);
             weekDays.add(weekDay);
-            _firstDayOfWeek = _firstDayOfWeek.plus(1);
-        } while (_firstDayOfWeek != firstDayOfWeek);
+            day = day.plus(1);
+        } while (day != configuration.getFirstDayOfWeek());
 
         addRow(weekDays);
     }
@@ -223,7 +221,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
         var dayComponents = new ArrayList<Component>(7);
         var dayOfWeekOfFirstDayInMonth = yearMonthHolder.getValue().atDay(1).getDayOfWeek();
-        var dayIterator = firstDayOfWeek;
+        var dayIterator = configuration.getFirstDayOfWeek();
 
         // Fill empty days before first day of month
         while (dayIterator != dayOfWeekOfFirstDayInMonth) {
@@ -275,7 +273,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     }
 
     private Span makeMonthTitle() {
-        final var monthTitle = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()));
+        final var monthTitle = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(configuration.getMonthTextStyle(), getLocale()));
         monthTitle.addClassName("title");
         if (isReadOnly()) {
             monthTitle.addClassName(Styles.READONLY);
@@ -358,7 +356,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private Component makeMonthSelectionComponent() {
 
         var monthSelect = new ComboBox<Month>();
-        monthSelect.setItemLabelGenerator(month -> month.getDisplayName(monthTextStyle, getLocale()));
+        monthSelect.setItemLabelGenerator(month -> month.getDisplayName(configuration.getMonthTextStyle(), getLocale()));
         monthSelect.setMaxWidth(4, Unit.REM);
         monthSelect.addThemeVariants(ComboBoxVariant.LUMO_SMALL);
         monthSelect.setItems(Month.values());
@@ -508,10 +506,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         span.setWidth(30, Unit.PIXELS);
         span.getStyle().set("margin", "1px");
         return span;
-    }
-
-    private static DayOfWeek getFirstDayOfWeekByLocale(Locale locale) {
-        return WeekFields.of(locale).getFirstDayOfWeek();
     }
 
     private static int getLastDayOfMonth(YearMonth yearMonth) {
