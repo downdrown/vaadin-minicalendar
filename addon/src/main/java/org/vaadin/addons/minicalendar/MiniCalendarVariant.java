@@ -2,6 +2,9 @@ package org.vaadin.addons.minicalendar;
 
 import com.vaadin.flow.component.shared.ThemeVariant;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+
 /**
  * Additional themings that can be applied to the {@link MiniCalendar}.
  *
@@ -27,5 +30,22 @@ public enum MiniCalendarVariant implements ThemeVariant {
     @Override
     public String getVariantName() {
         return variant;
+    }
+
+    public boolean canBeAppliedFor(LocalDate date) {
+        return switch (this) {
+            case ROUNDED, HOVER_DAYS -> true;
+            case HIGHLIGHT_WEEKEND -> isWeekend(date);
+            case HIGHLIGHT_CURRENT_DAY -> isToday(date);
+        };
+    }
+
+    private static boolean isWeekend(LocalDate date) {
+        final var dayOfWeek = date.getDayOfWeek();
+        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
+    }
+
+    private static boolean isToday(LocalDate date) {
+        return date.isEqual(LocalDate.now());
     }
 }

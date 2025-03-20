@@ -4,7 +4,6 @@ import com.vaadin.flow.component.ClickNotifier;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.function.SerializablePredicate;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +16,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-@CssImport("./minicalendar.css")
 @Tag(Tag.SPAN)
 class DayComponent extends Component implements HasEnabled, ClickNotifier<DayComponent> {
 
@@ -60,7 +58,6 @@ class DayComponent extends Component implements HasEnabled, ClickNotifier<DayCom
 
     private void renderComponent() {
         getElement().setText(String.valueOf(date.getDayOfMonth()));
-        addClassName(Styles.BASE);
         addClassName(Styles.DAY);
         applyVariants();
         applyExternalHandlers();
@@ -72,23 +69,9 @@ class DayComponent extends Component implements HasEnabled, ClickNotifier<DayCom
     }
 
     private void applyVariant(MiniCalendarVariant variant) {
-        // Special handling for "HIGHLIGHT_CURRENT_DAY", as this may only be applied for the current day
-        if (variant == MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY && isToday()) {
+        if (variant.canBeAppliedFor(date)) {
             addClassName(variant.getVariantName());
         }
-
-        // Special handling for "HIGHLIGHT_CURRENT_DAY", as this may only be applied for the current day
-        else if (variant == MiniCalendarVariant.HIGHLIGHT_WEEKEND && isWeekend()) {
-            addClassName(variant.getVariantName());
-        }
-
-        // Exit special handling
-        else {
-            return;
-        }
-
-        // Add all other variant styles
-        addClassName(variant.getVariantName());
     }
 
     private void registerObservers() {
