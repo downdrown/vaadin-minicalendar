@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -45,6 +44,9 @@ class DayComponent extends Component implements HasEnabled, ClickNotifier<DayCom
         renderComponent();
     }
 
+
+    /* Public API */
+
     void select() {
         setSelected(true);
     }
@@ -52,6 +54,9 @@ class DayComponent extends Component implements HasEnabled, ClickNotifier<DayCom
     void deselect() {
         setSelected(false);
     }
+
+
+    /* Internal API */
 
     private void setSelected(boolean selected) {
         if (selected) {
@@ -141,13 +146,5 @@ class DayComponent extends Component implements HasEnabled, ClickNotifier<DayCom
         }
 
         return result;
-    }
-
-    private boolean isToday() {
-        return date.equals(LocalDate.now());
-    }
-
-    private boolean isWeekend() {
-        return date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY;
     }
 }
