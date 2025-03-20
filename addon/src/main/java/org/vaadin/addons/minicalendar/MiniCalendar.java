@@ -24,12 +24,8 @@ import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoIcon;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -52,16 +48,13 @@ import java.util.Set;
 @CssImport("./minicalendar.css")
 public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVariant<MiniCalendarVariant>, LocaleChangeObserver {
 
-    private static final Logger log = LoggerFactory.getLogger(MiniCalendar.class);
-
-    private static final Duration LONG_INVOCATION_THRESHOLD = Duration.ofMillis(30);
-     private final VerticalLayout content = new VerticalLayout();
+    private final VerticalLayout content = new VerticalLayout();
     private final List<MiniCalendarVariant> appliedVariants = new ArrayList<>(MiniCalendarVariant.values().length);
     private final YearMonthHolder yearMonthHolder = new YearMonthHolder();
     private DayOfWeek firstDayOfWeek = getFirstDayOfWeekByLocale(getLocale());
     private TextStyle dayTextStyle = TextStyle.SHORT_STANDALONE;
     private TextStyle monthTextStyle = TextStyle.FULL;
-    private Span selectedComponent = null;
+    private DayComponent selectedComponent = null;
 
     /* External Handlers */
 
@@ -99,7 +92,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     @Override
     public void setValue(LocalDate newValue) {
-        final var redrawRequired = !Objects.equals(getValue(), newValue);
+        final var redrawRequired = !isToday(newValue);
         super.setValue(newValue);
         if (newValue != null) {
             yearMonthHolder.setValue(YearMonth.from(newValue));
@@ -408,7 +401,22 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     }
 
     private Component makeDayComponent(LocalDate forDay) {
-        var component = span(String.valueOf(forDay.getDayOfMonth()));
+        final var component = new DayComponent(
+            forDay,
+            appliedVariants,
+            dayEnabledProvider,
+            dayStyleProvider
+        );
+
+        if (isReadOnly()) {
+            component.addClassName(Styles.READONLY);
+        }
+
+        if (isToday(forDay)) {
+            component.select();
+            selectedComponent = component;
+        }
+
         component.addClickListener(event -> {
 
             if (isInteractionDisabled()) {
@@ -416,67 +424,27 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             }
 
             if (selectedComponent == event.getSource()) {
-                selectedComponent.removeClassName(Styles.SELECTED);
+                selectedComponent.deselect();
                 selectedComponent = null;
                 setModelValue(null, true);
                 return;
             }
 
             if (selectedComponent != null) {
-                selectedComponent.removeClassName(Styles.SELECTED);
+                selectedComponent.deselect();
             }
 
             selectedComponent = event.getSource();
-            selectedComponent.addClassName(Styles.SELECTED);
+            selectedComponent.select();
 
             setModelValue(forDay, true);
         });
 
-        if (Objects.equals(getValue(), forDay)) {
-            component.addClassName(Styles.SELECTED);
-            selectedComponent = component;
-        }
-
-        if (isWeekend(forDay) && hasVariant(MiniCalendarVariant.HIGHLIGHT_WEEKEND)) {
-            component.addClassName(MiniCalendarVariant.HIGHLIGHT_WEEKEND.getVariantName());
-        }
-
-        component.addClassName(Styles.DAY);
-
-        if (hasVariant(MiniCalendarVariant.ROUNDED)) {
-            component.addClassName(MiniCalendarVariant.ROUNDED.getVariantName());
-        }
-
-        if (hasVariant(MiniCalendarVariant.HOVER_DAYS)) {
-            component.addClassName(MiniCalendarVariant.HOVER_DAYS.getVariantName());
-        }
-
-        if (hasVariant(MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY) && forDay.equals(LocalDate.now())) {
-            component.addClassName(MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY.getVariantName());
-        }
-
-        if (isReadOnly()) {
-            component.addClassName(Styles.READONLY);
-        }
-
-        final var dayIsEnabled = checkIfDayIsEnabled(forDay);
-        component.setEnabled(dayIsEnabled);
-        if (!dayIsEnabled) {
-            component.addClassName(Styles.DISABLED);
-        }
-
-        final var additionalStyles = checkIfAdditionalStylesAreApplied(forDay);
-        if (additionalStyles != null && !additionalStyles.isEmpty()) {
-            additionalStyles.forEach(additionalClassName -> {
-                if (StringUtils.isNotBlank(additionalClassName)) {
-                    component.addClassName(additionalClassName);
-                }
-            });
-        }
-
-        addListener(ReadOnlyStateChangeEvent.class, event -> toggleStyle(component, Styles.READONLY));
-
         return component;
+    }
+
+    private boolean isToday(LocalDate date) {
+        return Objects.equals(getValue(), date);
     }
 
     private void navigateToPreviousMonth() {
@@ -503,43 +471,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         return Collections.unmodifiableList(eligibleYears);
     }
 
-    private boolean checkIfDayIsEnabled(LocalDate forDay) {
-        if (dayEnabledProvider == null) {
-            return true;
-        }
-        var result = true;
-
-        final var invocationStart = System.currentTimeMillis();
-        result = dayEnabledProvider.test(forDay);
-        final var invocationEnd = System.currentTimeMillis();
-
-        final var invocationDuration = Duration.ofMillis(invocationEnd - invocationStart);
-        if (invocationDuration.compareTo(LONG_INVOCATION_THRESHOLD) > 0) {
-            log.warn("Slow dayEnabledProvider call detected! Invocation took {}ms, threshold is {}", invocationDuration, LONG_INVOCATION_THRESHOLD);
-        }
-
-        return result;
-    }
-
-    private List<String> checkIfAdditionalStylesAreApplied(LocalDate forDay) {
-        if (dayStyleProvider == null) {
-            return Collections.emptyList();
-        }
-
-        List<String> result;
-
-        final var invocationStart = System.currentTimeMillis();
-        result = dayStyleProvider.apply(forDay);
-        final var invocationEnd = System.currentTimeMillis();
-
-        final var invocationDuration = Duration.ofMillis(invocationEnd - invocationStart);
-        if (invocationDuration.compareTo(LONG_INVOCATION_THRESHOLD) > 0) {
-            log.warn("Slow dayStyleProvider call detected! Invocation took {}ms, threshold is {}", invocationDuration, LONG_INVOCATION_THRESHOLD);
-        }
-
-        return result;
-    }
-
     private void addRow(List<? extends Component> columns) {
 
         var rowLayout = new FlexLayout();
@@ -553,10 +484,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         }
 
         content.add(rowLayout);
-    }
-
-    private boolean hasVariant(MiniCalendarVariant variant) {
-        return appliedVariants.contains(variant);
     }
 
     private boolean isInteractionDisabled() {
@@ -590,11 +517,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private static int getLastDayOfMonth(YearMonth yearMonth) {
         return yearMonth.atEndOfMonth().getDayOfMonth();
     }
-
-    private static boolean isWeekend(LocalDate localDate) {
-        return localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY;
-    }
-
 
     private static final class YearMonthHolder implements HasValue<ValueChangeEvent<YearMonth>, YearMonth> {
 
