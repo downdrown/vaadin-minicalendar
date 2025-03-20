@@ -19,6 +19,7 @@ final class MiniCalendarConfiguration {
     private TextStyle monthTextStyle = TextStyle.FULL;
     private boolean allowDeselection = true;
     private boolean showWeekNumbers = false;
+    private String weekNumberPrefix = "";
 
     public DayOfWeek getFirstDayOfWeek() {
         return firstDayOfWeek;
@@ -58,6 +59,14 @@ final class MiniCalendarConfiguration {
 
     public void setShowWeekNumbers(boolean showWeekNumbers) {
         this.showWeekNumbers = showWeekNumbers;
+    }
+
+    public String getWeekNumberPrefix() {
+        return weekNumberPrefix;
+    }
+
+    public void setWeekNumberPrefix(String weekNumberPrefix) {
+        this.weekNumberPrefix = weekNumberPrefix;
     }
 
     private static DayOfWeek getFirstDayOfWeekByLocale(Locale locale) {

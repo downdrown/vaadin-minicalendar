@@ -169,6 +169,11 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         redraw();
     }
 
+    public void setWeekNumberPrefix(String weekNumberPrefix) {
+        configuration.setWeekNumberPrefix(weekNumberPrefix);
+        redraw();
+    }
+
     public Registration setDayEnabledProvider(SerializablePredicate<LocalDate> dayEnabledProvider) {
         this.dayEnabledProvider = dayEnabledProvider;
         redraw();
