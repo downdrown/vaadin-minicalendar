@@ -47,7 +47,7 @@ public class OverviewView extends Div implements HasDynamicTitle {
 
     private final Set<MiniCalendar> miniCalendars = new HashSet<>();
     private final HasValue.ValueChangeListener<HasValue.ValueChangeEvent<LocalDate>> onDateSelection = event -> {
-        if (event.isFromClient()) {
+        if (event.isFromClient() && event.getValue() != null) {
 
             final var notification = i18n(
                 "overview.notification.value-change",

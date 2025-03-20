@@ -17,7 +17,7 @@
     text-align: center;
 }
 
-.minicalendar:not([disabled]) .title:not(.readonly) {
+.minicalendar:not([disabled]) .day:not(.readonly):not(.disabled) {
     cursor: pointer;
 }
 
@@ -35,6 +35,9 @@
 }
 
 .minicalendar .day {
+    width: 30px;
+    height: 30px;
+    margin: 1px;
     background-color: var(--lumo-contrast-5pct);
     border-radius: 15%;
     text-align: center;

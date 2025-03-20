@@ -1,6 +1,8 @@
 package org.vaadin.addons.minicalendar;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Unit;
@@ -22,7 +24,6 @@ import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoIcon;
-import org.apache.commons.lang3.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -33,10 +34,8 @@ import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -49,26 +48,16 @@ import java.util.Set;
 @CssImport("./minicalendar.css")
 public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVariant<MiniCalendarVariant>, LocaleChangeObserver {
 
-    private static final String CSS_BASE = "minicalendar";
-    private static final String CSS_WEEKDAY = "weekday";
-    private static final String CSS_DAY = "day";
-    private static final String CSS_SELECTED = "selected";
-    private static final String CSS_READONLY = "readonly";
-    private static final String CSS_DISABLED = "disabled";
     private final VerticalLayout content = new VerticalLayout();
-    private final HashMap<LocalDate, Component> dayToComponentMapping = new HashMap<>(31);
     private final List<MiniCalendarVariant> appliedVariants = new ArrayList<>(MiniCalendarVariant.values().length);
     private final YearMonthHolder yearMonthHolder = new YearMonthHolder();
     private DayOfWeek firstDayOfWeek = getFirstDayOfWeekByLocale(getLocale());
     private TextStyle dayTextStyle = TextStyle.SHORT_STANDALONE;
     private TextStyle monthTextStyle = TextStyle.FULL;
-    private Span selectedComponent = null;
-    private Button previousMonthButton = null;
-    private Button nextMonthButton = null;
-    private Span monthTitle = null;
-    private Span yearTitle = null;
+    private DayComponent selectedComponent = null;
 
     /* External Handlers */
+
     private SerializablePredicate<LocalDate> dayEnabledProvider = null;
     private SerializableFunction<LocalDate, List<String>> dayStyleProvider = null;
 
@@ -88,7 +77,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         this.yearMonthHolder.setValue(yearMonth);
         yearMonthHolder.addValueChangeListener(e -> redraw());
 
-        content.addClassName(CSS_BASE);
+        content.addClassName(Styles.BASE);
         content.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
         content.setSpacing(false);
         content.setPadding(false);
@@ -103,7 +92,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     @Override
     public void setValue(LocalDate newValue) {
-        final var redrawRequired = !Objects.equals(getValue(), newValue);
+        final var redrawRequired = !isToday(newValue);
         super.setValue(newValue);
         if (newValue != null) {
             yearMonthHolder.setValue(YearMonth.from(newValue));
@@ -116,16 +105,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     @Override
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
-        for (Map.Entry<LocalDate, Component> entry : dayToComponentMapping.entrySet()) {
-            final var dayComponent = entry.getValue();
-            if (dayComponent instanceof HasStyle) {
-                final var styledComponent = (HasStyle) dayComponent;
-                toggleStyle(styledComponent, CSS_READONLY);
-            }
-        }
-        toggleStyle(yearTitle, CSS_READONLY);
-        previousMonthButton.setVisible(!readOnly);
-        nextMonthButton.setVisible(!readOnly);
+        fireEvent(new ReadOnlyStateChangeEvent(this, false));
     }
 
     @Override
@@ -201,6 +181,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         };
     }
 
+
     /* Internal API */
 
     private void redraw() {
@@ -210,7 +191,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private void resetComponent() {
         content.removeAll();
-        dayToComponentMapping.clear();
         selectedComponent = null;
     }
 
@@ -221,62 +201,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     }
 
     private void renderTitle() {
-
-        previousMonthButton = new Button(LumoIcon.ANGLE_LEFT.create(), e -> navigateToPreviousMonth());
-        previousMonthButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
-        previousMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        previousMonthButton.setVisible(!isReadOnly());
-
-        nextMonthButton = new Button(LumoIcon.ANGLE_RIGHT.create(), e -> navigateToNextMonth());
-        nextMonthButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
-        nextMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        nextMonthButton.setVisible(!isReadOnly());
-
-        monthTitle = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()));
-        monthTitle.addClassName("title");
-
-        yearTitle = new Span(String.valueOf(yearMonthHolder.getValue().getYear()));
-        yearTitle.addClassName("title");
-
-        if (isReadOnly()) {
-            monthTitle.addClassName(CSS_READONLY);
-            yearTitle.addClassName(CSS_READONLY);
-        }
-
-        var monthYearTitleLayout = new HorizontalLayout(monthTitle, yearTitle);
-        monthYearTitleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        monthYearTitleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        monthYearTitleLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        monthYearTitleLayout.setWidth(null);
-        monthYearTitleLayout.setMargin(false);
-        monthYearTitleLayout.setPadding(false);
-        monthYearTitleLayout.setSpacing(true);
-
-        var titleLayout = new HorizontalLayout(previousMonthButton, monthYearTitleLayout, nextMonthButton);
-        titleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        titleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        titleLayout.setWidthFull();
-        titleLayout.setSpacing(true);
-        titleLayout.setHeight(30, Unit.PIXELS);
-        titleLayout.expand(monthYearTitleLayout);
-
-        monthTitle.addClickListener(event -> {
-            if (isInteractionDisabled()) {
-                return;
-            }
-            var monthSelection = monthSelect();
-            monthYearTitleLayout.replace(monthTitle, monthSelection);
-        });
-
-        yearTitle.addClickListener(event -> {
-            if (isInteractionDisabled()) {
-                return;
-            }
-            var yearSelection = yearSelection();
-            monthYearTitleLayout.replace(yearTitle, yearSelection);
-        });
-
-        content.add(titleLayout);
+        content.add(makeTitleLayout());
     }
 
     private void renderHeaderRow() {
@@ -286,7 +211,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
         do {
             Span weekDay = span(_firstDayOfWeek.getDisplayName(dayTextStyle, getLocale()));
-            weekDay.addClassName(CSS_WEEKDAY);
+            weekDay.addClassName(Styles.WEEKDAY);
             weekDays.add(weekDay);
             _firstDayOfWeek = _firstDayOfWeek.plus(1);
         } while (_firstDayOfWeek != firstDayOfWeek);
@@ -315,8 +240,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             }
 
             var day = yearMonthHolder.getValue().atDay(dayOfMonth);
-            var dayComponent = createDayComponent(day);
-            dayToComponentMapping.put(day, dayComponent);
+            var dayComponent = makeDayComponent(day);
             dayComponents.add(dayComponent);
         }
 
@@ -328,7 +252,110 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         addRow(dayComponents);
     }
 
-    private Component monthSelect() {
+
+    /* Component factory API */
+
+    private Button makeButton(Component icon, ComponentEventListener<ClickEvent<Button>> clickListener) {
+        final var button = new Button(icon, clickListener);
+        button.addThemeVariants(ButtonVariant.LUMO_SMALL);
+        button.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        return button;
+    }
+
+    private Button makePreviousMonthButton() {
+        final var button = makeButton(LumoIcon.ANGLE_LEFT.create(), event -> navigateToPreviousMonth());
+        button.setVisible(!isReadOnly());
+        return button;
+    }
+
+    private Button makeNextMonthButton() {
+        final var button = makeButton(LumoIcon.ANGLE_RIGHT.create(), event -> navigateToNextMonth());
+        button.setVisible(!isReadOnly());
+        return button;
+    }
+
+    private Span makeMonthTitle() {
+        final var monthTitle = new Span(yearMonthHolder.getValue().getMonth().getDisplayName(monthTextStyle, getLocale()));
+        monthTitle.addClassName("title");
+        if (isReadOnly()) {
+            monthTitle.addClassName(Styles.READONLY);
+        }
+        return monthTitle;
+    }
+
+    private Span makeYearTitle() {
+        final var yearTitle = new Span(String.valueOf(yearMonthHolder.getValue().getYear()));
+        yearTitle.addClassName("title");
+        if (isReadOnly()) {
+            yearTitle.addClassName(Styles.READONLY);
+        }
+        return yearTitle;
+    }
+
+    private Component makeMonthYearTitleLayout() {
+
+        final var monthTitle = makeMonthTitle();
+        final var yearTitle = makeYearTitle();
+
+        var monthYearTitleLayout = new HorizontalLayout(monthTitle, yearTitle);
+        monthYearTitleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        monthYearTitleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        monthYearTitleLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        monthYearTitleLayout.setWidth(null);
+        monthYearTitleLayout.setMargin(false);
+        monthYearTitleLayout.setPadding(false);
+        monthYearTitleLayout.setSpacing(true);
+
+        monthTitle.addClickListener(event -> {
+            if (isInteractionDisabled()) {
+                return;
+            }
+            var monthSelection = makeMonthSelectionComponent();
+            monthYearTitleLayout.replace(monthTitle, monthSelection);
+        });
+
+        addListener(ReadOnlyStateChangeEvent.class, event -> {
+            final var isEnabled = !event.isReadOnly();
+            monthTitle.setEnabled(isEnabled);
+            yearTitle.setEnabled(isEnabled);
+            toggleStyle(yearTitle, Styles.READONLY);
+        });
+
+        yearTitle.addClickListener(event -> {
+            if (isInteractionDisabled()) {
+                return;
+            }
+            var yearSelection = makeYearSelectionComponent();
+            monthYearTitleLayout.replace(yearTitle, yearSelection);
+        });
+
+        return monthYearTitleLayout;
+    }
+
+    private Component makeTitleLayout() {
+
+        final var previousMonthButton = makePreviousMonthButton();
+        final var nextMonthButton = makeNextMonthButton();
+        final var  monthYearTitleLayout = makeMonthYearTitleLayout();
+
+        var titleLayout = new HorizontalLayout(previousMonthButton, monthYearTitleLayout, nextMonthButton);
+        titleLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        titleLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        titleLayout.setWidthFull();
+        titleLayout.setSpacing(true);
+        titleLayout.setHeight(30, Unit.PIXELS);
+        titleLayout.expand(monthYearTitleLayout);
+
+        addListener(ReadOnlyStateChangeEvent.class, event -> {
+            final var isVisible = !event.isReadOnly();
+            previousMonthButton.setVisible(isVisible);
+            nextMonthButton.setVisible(isVisible);
+        });
+
+        return titleLayout;
+    }
+
+    private Component makeMonthSelectionComponent() {
 
         var monthSelect = new ComboBox<Month>();
         monthSelect.setItemLabelGenerator(month -> month.getDisplayName(monthTextStyle, getLocale()));
@@ -348,7 +375,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         return monthSelect;
     }
 
-    private Component yearSelection() {
+    private Component makeYearSelectionComponent() {
 
         var yearSelect = new ComboBox<Year>();
         yearSelect.setMaxWidth(4, Unit.REM);
@@ -371,6 +398,53 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         );
 
         return yearSelect;
+    }
+
+    private Component makeDayComponent(LocalDate forDay) {
+        final var component = new DayComponent(
+            forDay,
+            appliedVariants,
+            dayEnabledProvider,
+            dayStyleProvider
+        );
+
+        if (isReadOnly()) {
+            component.addClassName(Styles.READONLY);
+        }
+
+        if (isToday(forDay)) {
+            component.select();
+            selectedComponent = component;
+        }
+
+        component.addClickListener(event -> {
+
+            if (isInteractionDisabled()) {
+                return;
+            }
+
+            if (selectedComponent == event.getSource()) {
+                selectedComponent.deselect();
+                selectedComponent = null;
+                setModelValue(null, true);
+                return;
+            }
+
+            if (selectedComponent != null) {
+                selectedComponent.deselect();
+            }
+
+            selectedComponent = event.getSource();
+            selectedComponent.select();
+
+            setModelValue(forDay, true);
+        });
+
+        return component;
+    }
+
+    private boolean isToday(LocalDate date) {
+        return Objects.equals(getValue(), date);
     }
 
     private void navigateToPreviousMonth() {
@@ -397,80 +471,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         return Collections.unmodifiableList(eligibleYears);
     }
 
-    private Component createDayComponent(LocalDate forDay) {
-        var component = span(String.valueOf(forDay.getDayOfMonth()));
-        component.addClickListener(event -> {
-
-            if (isInteractionDisabled()) {
-                return;
-            }
-
-            if (selectedComponent == event.getSource()) {
-                selectedComponent.removeClassName(CSS_SELECTED);
-                selectedComponent = null;
-                setModelValue(null, true);
-                return;
-            }
-
-            if (selectedComponent != null) {
-                selectedComponent.removeClassName(CSS_SELECTED);
-            }
-
-            selectedComponent = event.getSource();
-            selectedComponent.addClassName(CSS_SELECTED);
-
-            setModelValue(forDay, true);
-        });
-
-        if (Objects.equals(getValue(), forDay)) {
-            component.addClassName(CSS_SELECTED);
-            selectedComponent = component;
-        }
-
-        if (isWeekend(forDay) && hasVariant(MiniCalendarVariant.HIGHLIGHT_WEEKEND)) {
-            component.addClassName(MiniCalendarVariant.HIGHLIGHT_WEEKEND.getVariantName());
-        }
-
-        component.addClassName(CSS_DAY);
-
-        if (hasVariant(MiniCalendarVariant.ROUNDED)) {
-            component.addClassName(MiniCalendarVariant.ROUNDED.getVariantName());
-        }
-
-        if (hasVariant(MiniCalendarVariant.HOVER_DAYS)) {
-            component.addClassName(MiniCalendarVariant.HOVER_DAYS.getVariantName());
-        }
-
-        if (hasVariant(MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY) && forDay.equals(LocalDate.now())) {
-            component.addClassName(MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY.getVariantName());
-        }
-
-        if (isReadOnly()) {
-            component.addClassName(CSS_READONLY);
-        }
-
-        if (dayEnabledProvider != null) {
-            var dayEnabled = dayEnabledProvider.test(forDay);
-            component.setEnabled(dayEnabled);
-            if (!dayEnabled) {
-                component.addClassName(CSS_DISABLED);
-            }
-        }
-
-        if (dayStyleProvider != null) {
-            var additionalClassNames = dayStyleProvider.apply(forDay);
-            if (additionalClassNames != null) {
-                additionalClassNames.forEach(additionalClassName -> {
-                    if (StringUtils.isNotBlank(additionalClassName)) {
-                        component.addClassName(additionalClassName);
-                    }
-                });
-            }
-        }
-
-        return component;
-    }
-
     private void addRow(List<? extends Component> columns) {
 
         var rowLayout = new FlexLayout();
@@ -484,10 +484,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         }
 
         content.add(rowLayout);
-    }
-
-    private boolean hasVariant(MiniCalendarVariant variant) {
-        return appliedVariants.contains(variant);
     }
 
     private boolean isInteractionDisabled() {
@@ -521,11 +517,6 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
     private static int getLastDayOfMonth(YearMonth yearMonth) {
         return yearMonth.atEndOfMonth().getDayOfMonth();
     }
-
-    private static boolean isWeekend(LocalDate localDate) {
-        return localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY;
-    }
-
 
     private static final class YearMonthHolder implements HasValue<ValueChangeEvent<YearMonth>, YearMonth> {
 
