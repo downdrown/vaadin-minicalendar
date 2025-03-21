@@ -78,6 +78,7 @@
 
 .minicalendar .day.highlight-current-day {
     font-weight: bold;
+    background-color: var(--lumo-contrast-30pct);
 }
 
 .minicalendar .day.selected {
