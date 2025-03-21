@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import org.vaadin.addons.minicalendar.MiniCalendar;
+import org.vaadin.addons.minicalendar.MiniCalendarVariant;
 import org.vaadin.addons.minicalendar.layout.ShowCaseLayout;
 
 import java.time.format.TextStyle;
@@ -31,7 +32,8 @@ public class OtherExamplesView extends Div implements HasDynamicTitle {
 
         var viewLayout = new HorizontalLayout(
             calendarWithDayTextStyle(),
-            calendarWithDeselectionDisallowed()
+            calendarWithDeselectionDisallowed(),
+            calendarWithWeekDisplay()
         );
 
         viewLayout.setWidth(null);
@@ -67,6 +69,19 @@ public class OtherExamplesView extends Div implements HasDynamicTitle {
             fromDefinition(() -> {
                 var miniCalendar = new MiniCalendar();
                 miniCalendar.setAllowDeselection(false);
+                return miniCalendar;
+            })
+        );
+    }
+
+    private static Component calendarWithWeekDisplay() {
+        return new VerticalLayout(
+            header(i18n("otherexamples.weekdisplay.header")),
+            fromDefinition(() -> {
+                var miniCalendar = new MiniCalendar();
+                miniCalendar.addThemeVariants(MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY);
+                miniCalendar.setShowWeekNumbers(true);
+                miniCalendar.setWeekNumberPrefix("KW");
                 return miniCalendar;
             })
         );

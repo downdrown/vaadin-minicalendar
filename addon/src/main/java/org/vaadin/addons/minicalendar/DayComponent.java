@@ -47,6 +47,10 @@ class DayComponent extends Component implements HasEnabled, ClickNotifier<DayCom
 
     /* Public API */
 
+    LocalDate getDate() {
+        return date;
+    }
+
     void select() {
         setSelected(true);
     }

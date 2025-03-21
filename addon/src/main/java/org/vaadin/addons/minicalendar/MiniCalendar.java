@@ -31,10 +31,12 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -217,8 +219,14 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private void renderHeaderRow() {
 
-        var weekDays = new ArrayList<Span>(7);
+        var weekDays = new ArrayList<Span>(8);
         var day = configuration.getFirstDayOfWeek();
+
+        if (configuration.isShowWeekNumbers()) {
+            final var weekNumberHeaderSlot = emptySpan();
+            weekNumberHeaderSlot.setWidth(40, Unit.PIXELS);
+            weekDays.add(weekNumberHeaderSlot);
+        }
 
         do {
             Span weekDay = span(day.getDisplayName(configuration.getDayTextStyle(), getLocale()));
@@ -232,7 +240,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private void renderDayRows() {
 
-        var dayComponents = new ArrayList<Component>(7);
+        var dayComponents = new ArrayList<Component>(8);
         var dayOfWeekOfFirstDayInMonth = yearMonthHolder.getValue().atDay(1).getDayOfWeek();
         var dayIterator = configuration.getFirstDayOfWeek();
 
@@ -246,7 +254,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         for (int dayOfMonth = 1; dayOfMonth <= getLastDayOfMonth(yearMonthHolder.getValue()); dayOfMonth++) {
 
             if (dayComponents.size() == 7) {
-                addRow(dayComponents);
+                addRowWithWeekNumber(dayComponents);
                 dayComponents.clear();
             }
 
@@ -260,9 +268,40 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             dayComponents.add(emptySpan());
         }
 
+        addRowWithWeekNumber(dayComponents);
+    }
+
+    private void addRowWithWeekNumber(List<Component> dayComponents) {
+        if (configuration.isShowWeekNumbers() && !dayComponents.isEmpty()) {
+            var firstValidDayInWeek = findFirstValidDayInWeek(dayComponents);
+            if (firstValidDayInWeek != null) {
+                int weekNumber = firstValidDayInWeek.get(WeekFields.of(getLocale()).weekOfWeekBasedYear());
+                dayComponents.add(0, makeWeekNumberComponent(weekNumber)); // Insert at the beginning
+            } else {
+                dayComponents.add(0, emptySpan()); // Fallback: empty week number cell
+            }
+        }
         addRow(dayComponents);
     }
 
+    // Finds the first valid day in a given week row.
+    private LocalDate findFirstValidDayInWeek(List<Component> dayComponents) {
+        for (Component component : dayComponents) {
+            if (component instanceof DayComponent dayComponent) {
+                return dayComponent.getDate(); // Assuming DayComponent holds a date
+            }
+        }
+        return null;
+    }
+
+    // Creates a component for displaying the week number.
+    private Component makeWeekNumberComponent(int weekNumber) {
+        final var weekPrefix = Optional.ofNullable(configuration.getWeekNumberPrefix()).orElse("");
+        var span = span(weekPrefix + " " + weekNumber);
+        span.addClassName(Styles.WEEKNUMBER);
+        span.setWidth(40, Unit.PIXELS);
+        return span;
+    }
 
     /* Component factory API */
 

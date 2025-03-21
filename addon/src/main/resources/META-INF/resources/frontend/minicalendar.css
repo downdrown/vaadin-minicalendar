@@ -34,6 +34,16 @@
     line-height: 30px;
 }
 
+.minicalendar .weeknumber {
+    /*font-family: 'Roboto Mono', monospace;*/
+    font-size: .65rem;
+    color: var(--lumo-tertiary-text-color);
+    text-align: left;
+    vertical-align: middle;
+    line-height: 30px;
+    white-space: nowrap;
+}
+
 .minicalendar .day {
     width: 30px;
     height: 30px;
