@@ -33,7 +33,6 @@
 }
 
 .minicalendar .weeknumber {
-    /*font-family: 'Roboto Mono', monospace;*/
     font-size: .65rem;
     color: var(--lumo-tertiary-text-color);
     text-align: left;
