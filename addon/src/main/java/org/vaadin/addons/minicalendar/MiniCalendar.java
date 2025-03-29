@@ -174,6 +174,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     public void setWeekNumberPrefix(String weekNumberPrefix) {
         configuration.setWeekNumberPrefix(weekNumberPrefix);
+        configuration.setShowWeekNumbers(StringUtils.isNotBlank(weekNumberPrefix));
         redraw();
     }
 
