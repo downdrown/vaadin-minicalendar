@@ -81,7 +81,7 @@ public class OtherExamplesView extends Div implements HasDynamicTitle {
                 var miniCalendar = new MiniCalendar();
                 miniCalendar.addThemeVariants(MiniCalendarVariant.HIGHLIGHT_CURRENT_DAY);
                 miniCalendar.setShowWeekNumbers(true);
-                miniCalendar.setWeekNumberPrefix("KW");
+                miniCalendar.setWeekNumberPrefix(i18n("otherexamples.weekdisplay.week-prefix"));
                 return miniCalendar;
             })
         );
