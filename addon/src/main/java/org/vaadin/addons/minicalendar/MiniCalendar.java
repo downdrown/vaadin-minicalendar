@@ -24,6 +24,7 @@ import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoIcon;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -296,11 +297,17 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     // Creates a component for displaying the week number.
     private Component makeWeekNumberComponent(int weekNumber) {
-        final var weekPrefix = Optional.ofNullable(configuration.getWeekNumberPrefix()).orElse("");
-        var span = span(weekPrefix + " " + weekNumber);
+        final var span = span(makeWeekNumberPrefix() + weekNumber);
         span.addClassName(Styles.WEEKNUMBER);
         span.setWidth(40, Unit.PIXELS);
         return span;
+    }
+
+    private String makeWeekNumberPrefix() {
+        return Optional.ofNullable(configuration.getWeekNumberPrefix())
+            .filter(StringUtils::isNotBlank)
+            .map(prefix -> prefix.concat(" "))
+            .orElse("");
     }
 
     /* Component factory API */
