@@ -2,7 +2,6 @@
   Author: Manfred Huber
   Description: Custom styles for the MiniCalendar component.
 */
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200&display=swap');
 
 .minicalendar {
     -webkit-user-select: none;
@@ -26,12 +25,20 @@
 }
 
 .minicalendar .weekday {
-    font-family: 'Roboto Mono', monospace;
     font-size: var(--lumo-font-size-s);
     color: var(--lumo-secondary-text-color);
     text-align: center;
     vertical-align: middle;
     line-height: 30px;
+}
+
+.minicalendar .weeknumber {
+    font-size: .65rem;
+    color: var(--lumo-tertiary-text-color);
+    text-align: left;
+    vertical-align: middle;
+    line-height: 30px;
+    white-space: nowrap;
 }
 
 .minicalendar .day {
@@ -70,6 +77,7 @@
 
 .minicalendar .day.highlight-current-day {
     font-weight: bold;
+    background-color: var(--lumo-contrast-30pct);
 }
 
 .minicalendar .day.selected {

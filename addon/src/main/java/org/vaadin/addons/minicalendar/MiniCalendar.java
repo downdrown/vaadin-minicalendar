@@ -24,6 +24,7 @@ import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoIcon;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -31,10 +32,12 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -164,6 +167,17 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         redraw();
     }
 
+    public void setShowWeekNumbers(boolean showWeekNumbers) {
+        configuration.setShowWeekNumbers(showWeekNumbers);
+        redraw();
+    }
+
+    public void setWeekNumberPrefix(String weekNumberPrefix) {
+        configuration.setWeekNumberPrefix(weekNumberPrefix);
+        configuration.setShowWeekNumbers(StringUtils.isNotBlank(weekNumberPrefix));
+        redraw();
+    }
+
     public Registration setDayEnabledProvider(SerializablePredicate<LocalDate> dayEnabledProvider) {
         this.dayEnabledProvider = dayEnabledProvider;
         redraw();
@@ -207,8 +221,14 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private void renderHeaderRow() {
 
-        var weekDays = new ArrayList<Span>(7);
+        var weekDays = new ArrayList<Span>(8);
         var day = configuration.getFirstDayOfWeek();
+
+        if (configuration.isShowWeekNumbers()) {
+            final var weekNumberHeaderSlot = emptySpan();
+            weekNumberHeaderSlot.setWidth(40, Unit.PIXELS);
+            weekDays.add(weekNumberHeaderSlot);
+        }
 
         do {
             Span weekDay = span(day.getDisplayName(configuration.getDayTextStyle(), getLocale()));
@@ -222,7 +242,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
 
     private void renderDayRows() {
 
-        var dayComponents = new ArrayList<Component>(7);
+        var dayComponents = new ArrayList<Component>(8);
         var dayOfWeekOfFirstDayInMonth = yearMonthHolder.getValue().atDay(1).getDayOfWeek();
         var dayIterator = configuration.getFirstDayOfWeek();
 
@@ -236,7 +256,7 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
         for (int dayOfMonth = 1; dayOfMonth <= getLastDayOfMonth(yearMonthHolder.getValue()); dayOfMonth++) {
 
             if (dayComponents.size() == 7) {
-                addRow(dayComponents);
+                addRowWithWeekNumber(dayComponents);
                 dayComponents.clear();
             }
 
@@ -250,9 +270,46 @@ public class MiniCalendar extends CustomField<LocalDate> implements HasThemeVari
             dayComponents.add(emptySpan());
         }
 
+        addRowWithWeekNumber(dayComponents);
+    }
+
+    private void addRowWithWeekNumber(List<Component> dayComponents) {
+        if (configuration.isShowWeekNumbers() && !dayComponents.isEmpty()) {
+            var firstValidDayInWeek = findFirstValidDayInWeek(dayComponents);
+            if (firstValidDayInWeek != null) {
+                int weekNumber = firstValidDayInWeek.get(WeekFields.of(getLocale()).weekOfWeekBasedYear());
+                dayComponents.add(0, makeWeekNumberComponent(weekNumber)); // Insert at the beginning
+            } else {
+                dayComponents.add(0, emptySpan()); // Fallback: empty week number cell
+            }
+        }
         addRow(dayComponents);
     }
 
+    // Finds the first valid day in a given week row.
+    private LocalDate findFirstValidDayInWeek(List<Component> dayComponents) {
+        for (Component component : dayComponents) {
+            if (component instanceof DayComponent dayComponent) {
+                return dayComponent.getDate(); // Assuming DayComponent holds a date
+            }
+        }
+        return null;
+    }
+
+    // Creates a component for displaying the week number.
+    private Component makeWeekNumberComponent(int weekNumber) {
+        final var span = span(makeWeekNumberPrefix() + weekNumber);
+        span.addClassName(Styles.WEEKNUMBER);
+        span.setWidth(40, Unit.PIXELS);
+        return span;
+    }
+
+    private String makeWeekNumberPrefix() {
+        return Optional.ofNullable(configuration.getWeekNumberPrefix())
+            .filter(StringUtils::isNotBlank)
+            .map(prefix -> prefix.concat(" "))
+            .orElse("");
+    }
 
     /* Component factory API */
 

@@ -1,8 +1,8 @@
 FROM eclipse-temurin:17-jre-focal
 
 ENV HTTP_PORT=8080
-ENV TOMCAT_MAJOR=10
-ENV TOMCAT_VERSION=10.1.34
+ENV TOMCAT_MAJOR=11
+ENV TOMCAT_VERSION=11.0.5
 ENV TOMCAT_TGZ_URL=https://dlcdn.apache.org/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
 ENV CATALINA_HOME=/opt/tomcat
 ENV CATALINA_OPTS="-Dhttp.port=${HTTP_PORT}"
